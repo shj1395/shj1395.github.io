@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>云计算笔记三 | Fourth Street</title><meta name="keywords" content="笔记"><meta name="author" content="四号街1395"><meta name="copyright" content="四号街1395"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="集中：使用阵列的集中化存储来存放结构化数据 集中化存储的分类：  ​		阵列 NAS  分布式存储：存储非结构化数据 优点：并发系统，速度快、扩容方便  ​	块 文件 对象      结构化数据：关系型数据库组成的表格数据 非结构化数据：类似于视频、音频类的数据   串行、并行 数据写入ssd盘称为回写，存储的数据叫做缓存。 云计算考点： 1.将物理设备整合成资源池    3.domainU普通虚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云计算笔记三">
+<meta property="og:url" content="http://shj1395.top/2022/04/28/yun-ji-suan-bi-ji-san/index.html">
+<meta property="og:site_name" content="Fourth Street">
+<meta property="og:description" content="集中：使用阵列的集中化存储来存放结构化数据 集中化存储的分类：  ​		阵列 NAS  分布式存储：存储非结构化数据 优点：并发系统，速度快、扩容方便  ​	块 文件 对象      结构化数据：关系型数据库组成的表格数据 非结构化数据：类似于视频、音频类的数据   串行、并行 数据写入ssd盘称为回写，存储的数据叫做缓存。 云计算考点： 1.将物理设备整合成资源池    3.domainU普通虚">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg">
+<meta property="article:published_time" content="2022-04-27T22:05:56.000Z">
+<meta property="article:modified_time" content="2022-05-31T14:20:38.155Z">
+<meta property="article:author" content="四号街1395">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://shj1395.top/2022/04/28/yun-ji-suan-bi-ji-san/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '云计算笔记三',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2022-05-31 22:20:38'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/xiugai.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 6.2.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/111.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Fourth Street</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">云计算笔记三</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-27T22:05:56.000Z" title="发表于 2022-04-28 06:05:56">2022-04-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-31T14:20:38.155Z" title="更新于 2022-05-31 22:20:38">2022-05-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97%E7%AC%94%E8%AE%B0/">云计算笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="云计算笔记三"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>集中：使用阵列的集中化存储来存放结构化数据</p>
+<p>集中化存储的分类：</p>
+<ol>
+<li>​		阵列</li>
+<li>NAS</li>
+</ol>
+<p>分布式存储：存储非结构化数据</p>
+<p>优点：并发系统，速度快、扩容方便</p>
+<ol>
+<li>​	块</li>
+<li>文件</li>
+<li>对象</li>
+</ol>
+<br>
+
+<blockquote>
+<ul>
+<li>结构化数据：关系型数据库组成的表格数据</li>
+<li>非结构化数据：类似于视频、音频类的数据</li>
+</ul>
+</blockquote>
+<p>串行、并行</p>
+<p>数据写入ssd盘称为回写，存储的数据叫做缓存。</p>
+<p>云计算考点：</p>
+<p>1.将物理设备整合成资源池</p>
+<ol start="2">
+<li></li>
+</ol>
+<p>3.domainU普通虚拟机（可有多个）、domain0特权虚拟机（只有一个）</p>
+<p>domain0拥有设备驱动（用于申请硬件资源），拥有一个后端驱动，多个前端驱动、特点：随设备开启而开启<br>分时分通道</p>
+<p><strong>云计算：</strong>云计算就是把计算资源（CPU、内存、磁盘﹑路由器、交换机、负载均衡）和应用程序〈OS、IDE、DB、WEB中间件等）都整合起来形成资源池，然后放到网上就形成了“云计算”，无数的大型机房和大数据中心就成了“云端”。简单来说云计算是一种服务模式，将物理资源整合成资源池，并按需为用户提供服务。</p>
+<p><strong>云计算架构：、</strong></p>
+<p>物理资源层：服务器、存储（集中/分布）、网络、防火墙、VPN网关、路由器</p>
+<p>虚拟资源层：作业实例与底层物力资源隔离，计算虚拟化、存储虚拟化、网络虚拟化</p>
+<p>基础设施服务层：逻辑资源调度，弹性计算资源、存储资源、网路资源调用API</p>
+<p>应用层 ：软件即服务</p>
+<h1 id="Openstack"><a href="#Openstack" class="headerlink" title="Openstack"></a>Openstack</h1><p><strong>Openstack</strong>（资源的统一管理）：</p>
+<p>1、软硬件的统一管理</p>
+<p>2、异构虚拟化的统一管理</p>
+<p>3、异构硬件的统一管理</p>
+<p>4、不同数据中心的管理</p>
+<p><strong>Openstack</strong>的三大模块：</p>
+<p>nova（计算）、cinder（存储）、neutron（网络）</p>
+<p><strong>Openstack</strong>的作用：</p>
+<p>1、将物理设备整合成资源池</p>
+<p>2、屏蔽存储设备差异化</p>
+<p><strong>虚拟化技术本质：</strong></p>
+<p>虚拟化技术的本质主要分为四方面：分区、隔离、封装和相对于硬件独立</p>
+<p><strong>分区：</strong></p>
+<p>分区意味着虚拟化层为多个虚拟机划分服务器的能力；每个虚拟机可以同时运行一个独立的操作系统（相同或者不同的操作系统），使您能在一台服务器上面运行多个应用程序；每个操作系统只能看到虚拟化层为其提供的“虚拟硬件”（虚拟网卡、CPU、内存等），以使它认为运行在自己专用服务器上。</p>
+<p><strong>隔离：</strong></p>
+<p>虚拟机是相互隔离的。一个虚拟机的奔溃或者故障，比如说操作系统故障、应用程序崩溃或者驱动程序故障等等，不会影响到同一个服务器上面的其他虚拟机；一个虚拟机中的病毒、蠕虫等与其他虚拟机相互隔离，就像每个虚拟机都位于单独的物理机器上一样。可以进行资源控制以提供性能隔离，也可以在单一机器上面同时运行多个负载、应用程序、操作系统，而不会出现应用程序的冲突。</p>
+<p><strong>封装：</strong></p>
+<p>封装以为着将整个虚拟机（硬件配置、BIOS配置、内存状态、磁盘状态、CPU状态）存储再独立于物理硬件的一小组文件中。这样，您只需要复制几个文件就可以随时随地根据需要复制、保存和移动虚拟机。</p>
+<p><strong>相对于硬件独立（解耦）：</strong></p>
+<p>因为虚拟机运行于虚拟化层智商，所以只能看到虚拟机化层提供的虚拟硬件；此虚拟硬件也同样不必考虑物理服务器的情况；这样，虚拟机就可以在任何的X86服务器（IBM/DELL/HP等）上面运行无需进行任何修改，这样就打破了操作系统和硬件以及应用程序和操作系统、硬件之间的约束。</p>
+<p><strong>虚拟化架构：</strong></p>
+<p>1、寄居架构就是在操作系统之上安装和运行虚拟化程序，依赖于主机操作系统对设备的支持和物理资源的管理。</p>
+<p>2、裸金属架构就是直接在硬件上面安装虚拟化软件，再在其上安装操作系统和应用，依赖虚拟层内核和服务器控制台进行管理。</p>
+<p><strong>CPU</strong>虚拟化</p>
+<p>经典虚拟化：陷入 模拟</p>
+<p>经典虚拟化存在的问题：虚拟化漏洞（非特权）</p>
+<p>完全虚拟化：ring0 特权指令、ring3 非特权指令</p>
+<p>半虚拟化：主要采用Hypercall 技术。Guest OS 的部分代码被改变，从而使Guest OS会将和特权指令相关的操作都转换为发给VMM的Hypercall（超级调用），由VMM继续进行处理。而Hypercall支持的批处理和异步这两种优化方式，使得通过Hypercall 能得到近似于物理机的速度。OS必须开源</p>
+<p>硬件辅助虚拟化：root模式和非root模式</p>
+<p><em>XEN</em>架构：</p>
+<p>1、 Domian0是一个特殊的虚拟机，其具备特殊的，足够的权限直接访问底层的硬件设备，处理所有底层的I/O请求，并与其他虚拟机进行交互通信。Domian0对外部开放一个接口，使用户可以控制整个系统。没有Domian0,Xen虚拟化管理程序无法正常使用，它是整个系统第一个加载的虚拟机。domain0有设备驱动。（申请资源）</p>
+<p>2、 domain0有1个后端驱动。</p>
+<p>3、 domain0随设备开启而开启。</p>
+<p>4、 后端驱动进行分时分通道进行处理数据。</p>
+<h1 id="虚拟机内存QOS"><a href="#虚拟机内存QOS" class="headerlink" title="虚拟机内存QOS"></a>虚拟机内存QOS</h1><ul>
+<li>内存预留：虚拟机预留的最低物理内存。<ul>
+<li>​	预留的内存会被虚拟机独占。即，一旦内存被某个虚拟机预留，即使虚拟机实际内存使用量不超过预留量</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="shj1395.top">四号街1395</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://shj1395.top/2022/04/28/yun-ji-suan-bi-ji-san/">http://shj1395.top/2022/04/28/yun-ji-suan-bi-ji-san/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">转载请注明来处！！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/">笔记</a></div><div class="post_share"><div class="social-share" data-image="https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/04/28/metasploit-gong-ju-de-shi-yong/"><img class="prev-cover" src="https://p.ananas.chaoxing.com/star3/origin/12ed14d7fff38930d22bdd82a4441638.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Metasploit工具的使用</div></div></a></div><div class="next-post pull-right"><a href="/2022/04/28/dang-wo-zhen-zheng-kai-shi-ai-zi-ji-zhuo-bie-lin/"><img class="next-cover" src="https://w.wallhaven.cc/full/nk/wallhaven-nkkz8q.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">当我真正开始爱自己---卓别林</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/17/yun-ji-suan/" title="云计算"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-17</div><div class="title">云计算</div></div></a></div><div><a href="/2022/04/21/yun-ji-suan-bi-ji-er/" title="云计算笔记-二"><img class="cover" src="https://w.wallhaven.cc/full/rd/wallhaven-rd1237.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-21</div><div class="title">云计算笔记-二</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/111.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">四号街1395</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Openstack"><span class="toc-number">1.</span> <span class="toc-text">Openstack</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%86%85%E5%AD%98QOS"><span class="toc-number">2.</span> <span class="toc-text">虚拟机内存QOS</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记"><img src="https://w.wallhaven.cc/full/96/wallhaven-96w8e8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络安全运营笔记"/></a><div class="content"><a class="title" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记">网络安全运营笔记</a><time datetime="2022-06-09T03:05:16.000Z" title="发表于 2022-06-09 11:05:16">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳"><img src="https://w.wallhaven.cc/full/6o/wallhaven-6orjr7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="云计算归纳"/></a><div class="content"><a class="title" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳">云计算归纳</a><time datetime="2022-06-09T02:13:19.000Z" title="发表于 2022-06-09 10:13:19">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储"><img src="https://w.wallhaven.cc/full/e7/wallhaven-e7g71w.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络存储"/></a><div class="content"><a class="title" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储">网络存储</a><time datetime="2022-06-07T15:26:22.000Z" title="发表于 2022-06-07 23:26:22">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/02/hello-world/" title="Hello World"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/06/02/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-02T07:10:47.387Z" title="发表于 2022-06-02 15:10:47">2022-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电脑亮度无法调节方法"/></a><div class="content"><a class="title" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法">电脑亮度无法调节方法</a><time datetime="2022-05-22T20:46:59.000Z" title="发表于 2022-05-23 04:46:59">2022-05-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 四号街1395</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,雯雯" data-fontsize="20px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

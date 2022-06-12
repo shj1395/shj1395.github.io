@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>云计算 | Fourth Street</title><meta name="keywords" content="笔记"><meta name="author" content="四号街1395"><meta name="copyright" content="四号街1395"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="虚拟化课堂笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云计算">
+<meta property="og:url" content="http://shj1395.top/2022/03/17/yun-ji-suan/index.html">
+<meta property="og:site_name" content="Fourth Street">
+<meta property="og:description" content="虚拟化课堂笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png">
+<meta property="article:published_time" content="2022-03-16T21:41:41.000Z">
+<meta property="article:modified_time" content="2022-05-31T14:21:03.961Z">
+<meta property="article:author" content="四号街1395">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://shj1395.top/2022/03/17/yun-ji-suan/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '云计算',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-31 22:21:03'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/xiugai.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 6.2.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/111.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Fourth Street</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">云计算</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-16T21:41:41.000Z" title="发表于 2022-03-17 05:41:41">2022-03-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-31T14:21:03.961Z" title="更新于 2022-05-31 22:21:03">2022-05-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97%E7%AC%94%E8%AE%B0/">云计算笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="云计算"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="虚拟化"><a href="#虚拟化" class="headerlink" title="虚拟化"></a>虚拟化</h1><p>​		概述：把具体的物理硬件资源通过软件进行切割，变成更细颗粒度的资源，供给虚拟使用。</p>
+<p>​	硬件资源（具体的）—通过软件切割—   虚拟化（虚拟的）</p>
+<p>作用：</p>
+<ol>
+<li><p>提高资源利用率</p>
+</li>
+<li><p>os（操作系统）与硬件进行解耦</p>
+</li>
+<li><p>有独立于硬件的生命周期</p>
+</li>
+</ol>
+<h2 id="1-CPU虚拟化-分类"><a href="#1-CPU虚拟化-分类" class="headerlink" title="1.CPU虚拟化-分类"></a>1.CPU虚拟化-分类</h2><p><img src="https://p.ananas.chaoxing.com/star3/origin/b889c7cc3cde1418bfd3162746315acb.png"></p>
+<ul>
+<li>全虚 (虚拟机里面所有资源都是由如vmware这类的软件虚拟出来的，所以指令（特别是特权指令）都是由VMware这类软件拦截并翻译成物理机能读懂的命令)</li>
+</ul>
+<p>  ​	捕捉、拦截、翻译</p>
+<p>  ​	BT（二进制、扫描、翻译）</p>
+<p>  ​	VMM对上系统全虚，对下硬件hardware屏蔽隔离    </p>
+<ul>
+<li><p>半虚 （资源仍然由VMware这类软件提供,但是需要修改os内核,os必须是开源的,虚拟机如果使用特权指令，虚拟机会给vmm发送hyper call的调用，vmm通过拦截hyper call翻译特权指令，以防特权指令损坏硬件系统。）</p>
+<p>​	捕捉hyper call调用</p>
+</li>
+<li><p>硬虚 （硬件辅助虚拟化）</p>
+<ol>
+<li><p>非root模式：用户态发生的指令</p>
+</li>
+<li><p>root模式：内核态发生的指令</p>
+<p>例子：当用户态发生特权指令，先发送到非root模式处理，再发到root模式处理，然后倒序返回。</p>
+<p>透传</p>
+</li>
+</ol>
+<p> cpu,men,I/O  都支持三种模式</p>
+</li>
+</ul>
+<h2 id="2-内存虚拟化"><a href="#2-内存虚拟化" class="headerlink" title="2.内存虚拟化"></a>2.内存虚拟化</h2><p><img src="https://p.ananas.chaoxing.com/star3/origin/7e1dbedecda89b62426a51e1374ac922.png"></p>
+<p>​	<strong>虚拟机的连续物理内存与物理机分散物理内存有映射关系</strong></p>
+<ol>
+<li>​		全虚 由vmm来维护2张映射表</li>
+<li>硬件辅助虚拟化 由硬件来维护2张映射表</li>
+</ol>
+<h2 id="3-I-x2F-O虚拟化"><a href="#3-I-x2F-O虚拟化" class="headerlink" title="3.I/O虚拟化"></a>3.I/O虚拟化</h2><p><img src="https://p.ananas.chaoxing.com/star3/origin/a47efd5d9f7373a1b261e3795def2a33.png"></p>
+<ol>
+<li><p>​	I/O 全虚拟化：通过纯软件的形式来模拟虚拟机的 I/O 请求。</p>
+<p><strong>优点：</strong></p>
+<p>不需要对操作系统做修改，也不需要改驱动程序，因此这种方式对于多种虚拟化技术的「可移植性」和「兼容性」比较好。</p>
+<p><strong>缺点：</strong></p>
+<p>纯软件形式模拟，自然性能不高，另外，虚拟机发出的 I/O 请求需要虚拟机和 VMM 之间的多次交互，产生大量的上下文切换，造成巨大的开销。</p>
+</li>
+<li><p>I/O 半虚拟化：针对 I/O 全虚拟化纯软件模拟性能不高这一点，I/O 半虚拟化前进了一步。它提供了一种机制，使得 Guest 端与 Host 端可以建立连接，直接通信，摒弃了截获模拟这种方式，从而获得较高的性能。<img src="https://upload-images.jianshu.io/upload_images/4249277-51d8b6ea2534a0b4?imageMogr2/auto-orient/strip%7CimageView2/2/w/513/format/webp"></p>
+<p><strong>优点：</strong></p>
+<p>性能较 I/O 全虚拟化有了较大的提升</p>
+<p><strong>缺点：</strong></p>
+<p>要修改操作系统内核以及驱动程序，因此会存在移植性和适用性方面的问题，导致其使用受限。<img src="https://p.ananas.chaoxing.com/star3/origin/d53dc451bef5e938d755c30bade0f89f.png"></p>
+</li>
+<li><p>I/O 直通或透传技术：上面两种虚拟化方式，还是从软件层面上来实现，性能自然不会太高。最好的提高性能的方式还是从硬件上来解决。如果让虚拟机独占一个物理设备，像宿主机一样使用物理设备，那无疑性能是最好的。</p>
+<p>I/O 直通技术就是提出来完成这样一件事的。它通过硬件的辅助可以让虚拟机直接访问物理设备，而不需要通过 VMM 或被 VMM 所截获。</p>
+<p>由于多个虚拟机直接访问物理设备，会涉及到内存的访问，而内存又是共享的，那怎么来隔离各个虚拟机对内存的访问呢，这里就要用到一门技术——IOMMU，简单说，IOMMU 就是用来隔离虚拟机对内存资源访问的。</p>
+<p>I/O 直通技术需要硬件支持才能完成，这方面首选是 Intel 的 VT-d 技术，它通过对芯片级的改造来达到这样的要求，这种方式固然对性能有着质的提升，不需要修改操作系统，移植性也好。</p>
+<p>但该方式也是有一定限制的，这种方式仅限于物理资源丰富的机器，因为这种方式仅仅能满足一个设备分配给一个虚拟机，一旦一个设备被虚拟机占用了，其他虚拟机时无法使用该设备的。<img src="https://upload-images.jianshu.io/upload_images/4249277-654068a08939582b?imageMogr2/auto-orient/strip%7CimageView2/2/w/513/format/webp"></p>
+<p>为了解决这个问题，使一个物理设备能被更多的虚拟机所共享。学术界和工业界都对此作了大量的改进，PCI-SIG 发布了 SR-IOV  (Single Root I/O Virtualizmion) 规范，其中详细阐述了硬件供应商在多个虚拟机中如何共享单个 I/O 设备硬件。</p>
+<p>SR-IOV标准定义了设备原生共享所需的「软硬件支持」。硬件支持包括芯片组对 SR-IOV 设备的识别，为保证对设备的安全、隔离访问还需要北桥芯片的 VT-d 支持，为保证虚拟机有独立的内存空间，CPU 要支持 IOMMU。软件方面，VMM 将驱动管理权限交给 Guest，Guest 操作系统必须支持 SR-IOV 功能。</p>
+<p>SR-IOV 单独引入了两种软件实体功能：</p>
+<ul>
+<li>PF（physical function）：包含轻量级的 PCIe 功能，负责管理 SR-IOV 设备的特殊驱动，其主要功能是为 Guest 提供设备访问功能和全局贡献资源配置的功能。</li>
+<li>VF（virtual function）：包含轻量级的 PCIe 功能。其功能包含三个方面：向虚拟机操作系统提供的接口；数据的发送、接收功能；与 PF 进行通信，完成全局相关操作。</li>
+</ul>
+<p>每个 SR-IOV 设备都可有一个物理功能 PF，并且每个 PF 最多可有 64,000 个与其关联的虚拟功能  VF。</p>
+<p>一般，Guest 通过物理功能 PF 驱动发现设备的 SR-IOV 功能后将包括发送、接收队列在内的物理资源依据 VF 数目划分成多个子集，然后 PF 驱动将这些资源子集抽象成 VF 设备，这样，VF 设备就可以通过某种通信机制分配给虚拟机了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4249277-bf311be988f78379?imageMogr2/auto-orient/strip%7CimageView2/2/w/513/format/webp"></p>
+<p>尽管 I/O 直通技术消除了虚拟机 I/O 中 VMM 干预引起的额外开销，但在 I/O 操作中 I/O 设备会产生大量的中断，出于安全等因素考虑，虚拟机无法直接处理中断，因此中断请求需要由 VMM 安全、隔离地路由至合适的虚拟机。所以，其实实际使用中，都是软硬件虚拟化方式结合使用的。</p>
+<h2 id="4-KVM-x2F-cpu、内存虚拟化"><a href="#4-KVM-x2F-cpu、内存虚拟化" class="headerlink" title="4.KVM/(cpu、内存虚拟化)"></a>4.KVM/(cpu、内存虚拟化)</h2><p>待完善。。。。</p>
+<h1 id="集群：HA、DRS、DPM"><a href="#集群：HA、DRS、DPM" class="headerlink" title="集群：HA、DRS、DPM"></a>集群：HA、DRS、DPM</h1><p>​    同一个集群的要求：同种架构，同种类型相同的物理配置。</p>
+<p>​	HA：高可用性（业务延续不中断） 主要做迁移用，保证业务  的完整性。HA因情况而开启，如果CNA负荷重建议HA不开启。</p>
+<p>迁移：</p>
+<ol>
+<li>热迁移——业务不中断，数据不丢失，用户无感知（手动、自动）</li>
+<li>冷迁移——业务中断，数据丢失，客户感知（手动）</li>
+</ol>
+<p>触发的条件：</p>
+<ol>
+<li>CNA故障或意外断电（心跳线告知vrm,由vrm将vm迁移到其他正常的CNA中。）</li>
+<li>vm故障 蓝屏/死机不工作（开启HA迁移由vm中的tools工作收集vm的信息如无任何信息表明vm发生故障，tools告知vrm，由vrm对vm进行迁移）</li>
+</ol>
+<p>要迁移的数据：迁移内存的数据。</p>
+<p>迁移成功的条件：</p>
+<ol>
+<li><p>同一个集群</p>
+</li>
+<li><p>同一个共享存储</p>
+</li>
+<li><p>同一个DVS(Distrubuts Vitural Switch)分布式虚拟交换机</p>
+<p>​        DRS 在集群中找到负载最轻的主机（Distributed Resource Scheduler）分布式资源调度程序，根据对资源池资源负载的动态监控，合理触发均匀分配规则，最终实现资源池中的物理服务器之间重新分布虚拟机的目的 。</p>
+<p>​		DPM（动态电源管理）     </p>
+<p>​		基板管理控制器（Baseboard Manager Controller，简称<strong>BMC</strong>） </p>
+<p>​		ipmi    </p>
+<p>​		 vrm通过bmc开关机</p>
+</li>
+</ol>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://shj1395.top">四号街1395</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://shj1395.top/2022/03/17/yun-ji-suan/">http://shj1395.top/2022/03/17/yun-ji-suan/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://shj1395.top" target="_blank">Fourth Street</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/">笔记</a></div><div class="post_share"><div class="social-share" data-image="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/03/20/test/"><img class="prev-cover" src="https://p.ananas.chaoxing.com/star3/origin/76093c9912781060309b6a1e711b9a3a.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">test</div></div></a></div><div class="next-post pull-right"><a href="/2022/03/16/day12web-lou-dong-sql-zhu-ru-jian-yao/"><img class="next-cover" src="https://p.ananas.chaoxing.com/star3/origin/2d9ffa847935e0bc1eb746e85300b8fb.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Day12web漏洞-SQL注入简要</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/04/28/yun-ji-suan-bi-ji-san/" title="云计算笔记三"><img class="cover" src="https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-28</div><div class="title">云计算笔记三</div></div></a></div><div><a href="/2022/04/21/yun-ji-suan-bi-ji-er/" title="云计算笔记-二"><img class="cover" src="https://w.wallhaven.cc/full/rd/wallhaven-rd1237.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-21</div><div class="title">云计算笔记-二</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/111.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">四号街1395</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">虚拟化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-CPU%E8%99%9A%E6%8B%9F%E5%8C%96-%E5%88%86%E7%B1%BB"><span class="toc-number">1.1.</span> <span class="toc-text">1.CPU虚拟化-分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="toc-number">1.2.</span> <span class="toc-text">2.内存虚拟化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-I-x2F-O%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="toc-number">1.3.</span> <span class="toc-text">3.I&#x2F;O虚拟化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-KVM-x2F-cpu%E3%80%81%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="toc-number">1.4.</span> <span class="toc-text">4.KVM&#x2F;(cpu、内存虚拟化)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%EF%BC%9AHA%E3%80%81DRS%E3%80%81DPM"><span class="toc-number">2.</span> <span class="toc-text">集群：HA、DRS、DPM</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记"><img src="https://w.wallhaven.cc/full/96/wallhaven-96w8e8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络安全运营笔记"/></a><div class="content"><a class="title" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记">网络安全运营笔记</a><time datetime="2022-06-09T03:05:16.000Z" title="发表于 2022-06-09 11:05:16">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳"><img src="https://w.wallhaven.cc/full/6o/wallhaven-6orjr7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="云计算归纳"/></a><div class="content"><a class="title" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳">云计算归纳</a><time datetime="2022-06-09T02:13:19.000Z" title="发表于 2022-06-09 10:13:19">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储"><img src="https://w.wallhaven.cc/full/e7/wallhaven-e7g71w.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络存储"/></a><div class="content"><a class="title" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储">网络存储</a><time datetime="2022-06-07T15:26:22.000Z" title="发表于 2022-06-07 23:26:22">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/02/hello-world/" title="Hello World"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/06/02/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-02T07:10:47.387Z" title="发表于 2022-06-02 15:10:47">2022-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电脑亮度无法调节方法"/></a><div class="content"><a class="title" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法">电脑亮度无法调节方法</a><time datetime="2022-05-22T20:46:59.000Z" title="发表于 2022-05-23 04:46:59">2022-05-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 四号街1395</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,雯雯" data-fontsize="20px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

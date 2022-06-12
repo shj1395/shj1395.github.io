@@ -1,0 +1,758 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Day22web漏洞-文件上传之内容逻辑数组绕过 | Fourth Street</title><meta name="keywords" content="小迪安全"><meta name="author" content="四号街1395"><meta name="copyright" content="四号街1395"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Pass-14 图片马绕过关卡简介图片马制作方法： copy a.jpg &#x2F;b + shell.php &#x2F;a shell.jpg        &#x2F;b 表示一个二进制文件        + 表示将多个文件合并成一个文件        &#x2F;a 表示一个ASCII文本文件 function getReailFileType($filename){     $file &#x3D; fopen($filename,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Day22web漏洞-文件上传之内容逻辑数组绕过">
+<meta property="og:url" content="http://shj1395.top/2022/05/05/day22web-lou-dong-wen-jian-shang-chuan-zhi-nei-rong-luo-ji-shu-zu-rao-guo/index.html">
+<meta property="og:site_name" content="Fourth Street">
+<meta property="og:description" content="Pass-14 图片马绕过关卡简介图片马制作方法： copy a.jpg &#x2F;b + shell.php &#x2F;a shell.jpg        &#x2F;b 表示一个二进制文件        + 表示将多个文件合并成一个文件        &#x2F;a 表示一个ASCII文本文件 function getReailFileType($filename){     $file &#x3D; fopen($filename,">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://w.wallhaven.cc/full/72/wallhaven-72kdvo.jpg">
+<meta property="article:published_time" content="2022-05-04T16:28:12.000Z">
+<meta property="article:modified_time" content="2022-05-31T14:20:55.876Z">
+<meta property="article:author" content="四号街1395">
+<meta property="article:tag" content="小迪安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://w.wallhaven.cc/full/72/wallhaven-72kdvo.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://shj1395.top/2022/05/05/day22web-lou-dong-wen-jian-shang-chuan-zhi-nei-rong-luo-ji-shu-zu-rao-guo/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Day22web漏洞-文件上传之内容逻辑数组绕过',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2022-05-31 22:20:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/xiugai.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 6.2.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/111.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://w.wallhaven.cc/full/72/wallhaven-72kdvo.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Fourth Street</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Day22web漏洞-文件上传之内容逻辑数组绕过</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-04T16:28:12.000Z" title="发表于 2022-05-05 00:28:12">2022-05-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-31T14:20:55.876Z" title="更新于 2022-05-31 22:20:55">2022-05-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B8%97%E9%80%8F%E4%B9%8B%E8%B7%AF/">渗透之路</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Day22web漏洞-文件上传之内容逻辑数组绕过"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Pass-14-图片马绕过"><a href="#Pass-14-图片马绕过" class="headerlink" title="Pass-14 图片马绕过"></a>Pass-14 图片马绕过</h2><h3 id="关卡简介"><a href="#关卡简介" class="headerlink" title="关卡简介"></a>关卡简介</h3><p>图片马制作方法：</p>
+<p>copy a.jpg /b + shell.php /a shell.jpg<br>        /b 表示一个二进制文件<br>        + 表示将多个文件合并成一个文件<br>        /a 表示一个ASCII文本文件</p>
+<pre class=" language-php"><code class="language-php"><span class="token keyword">function</span> <span class="token function">getReailFileType</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">fopen</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">,</span> <span class="token string">"rb"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$bin</span> <span class="token operator">=</span> <span class="token function">fread</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//只读2字节</span>
+    <span class="token function">fclose</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$strInfo</span> <span class="token operator">=</span> @<span class="token function">unpack</span><span class="token punctuation">(</span><span class="token string">"C2chars"</span><span class="token punctuation">,</span> <span class="token variable">$bin</span><span class="token punctuation">)</span><span class="token punctuation">;</span>    
+    <span class="token variable">$typeCode</span> <span class="token operator">=</span> <span class="token function">intval</span><span class="token punctuation">(</span><span class="token variable">$strInfo</span><span class="token punctuation">[</span><span class="token string">'chars1'</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token variable">$strInfo</span><span class="token punctuation">[</span><span class="token string">'chars2'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>    
+    <span class="token variable">$fileType</span> <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>    
+    <span class="token keyword">switch</span><span class="token punctuation">(</span><span class="token variable">$typeCode</span><span class="token punctuation">)</span><span class="token punctuation">{</span>      
+        <span class="token keyword">case</span> <span class="token number">255216</span><span class="token punctuation">:</span>            
+            <span class="token variable">$fileType</span> <span class="token operator">=</span> <span class="token string">'jpg'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token number">13780</span><span class="token punctuation">:</span>            
+            <span class="token variable">$fileType</span> <span class="token operator">=</span> <span class="token string">'png'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>        
+        <span class="token keyword">case</span> <span class="token number">7173</span><span class="token punctuation">:</span>            
+            <span class="token variable">$fileType</span> <span class="token operator">=</span> <span class="token string">'gif'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">default</span><span class="token punctuation">:</span>            
+            <span class="token variable">$fileType</span> <span class="token operator">=</span> <span class="token string">'unknown'</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>    
+        <span class="token keyword">return</span> <span class="token variable">$fileType</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token variable">$temp_file</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$file_type</span> <span class="token operator">=</span> <span class="token function">getReailFileType</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$file_type</span> <span class="token operator">==</span> <span class="token string">'unknown'</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"文件未知，上传失败！"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">"/"</span><span class="token punctuation">.</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">date</span><span class="token punctuation">(</span><span class="token string">"YmdHis"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token string">"."</span><span class="token punctuation">.</span><span class="token variable">$file_type</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">,</span><span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"上传出错！"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h3 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h3><p>fopen(filename,mode,include_path,context) 函数打开文件或者 URL。</p>
+<pre><code>filename 	必需。规定要打开的文件或 URL。
+mode 	    必需。规定要求到该文件/流的访问类型。可能的值见下表。
+include_path 	可选。如果也需要在 include_path 中检索文件的话，
+可以将该参数设	为 1 或 TRUE。
+context 	可选。规定文件句柄的环境。Context 是可以修改流的行为的一套选项。
+
+"r" 	只读方式打开，将文件指针指向文件头。
+"rb"    以二进制方式打开
+"r+" 	读写方式打开，将文件指针指向文件头。
+"w" 	写入方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之。
+"w+" 	读写方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之。
+"a" 	写入方式打开，将文件指针指向文件末尾。如果文件不存在则尝试创建之。
+"a+" 	读写方式打开，将文件指针指向文件末尾。如果文件不存在则尝试创建之。
+"x" 	创建并以写入方式打开，将文件指针指向文件头。如果文件已存在，则 fopen() 调用	失败并返回 FALSE，并生成一条 E_WARNING 级别的错误信息。如果文件不存在则尝试创建之。
+
+这和给底层的 open(2) 系统调用指定 O_EXCL|O_CREAT 标记是等价的。
+
+此选项被 PHP 4.3.2 以及以后的版本所支持，仅能用于本地文件。
+"x+" 	创建并以读写方式打开，将文件指针指向文件头。如果文件已存在，则 fopen() 调用失败并返回 FALSE，并生成一条 E_WARNING 级别的错误信息。如果文件不存在则尝试创建之。
+
+这和给底层的 open(2) 系统调用指定 O_EXCL|O_CREAT 标记是等价的。
+
+此选项被 PHP 4.3.2 以及以后的版本所支持，仅能用于本地文件。
+</code></pre>
+<p>fread(file,length) 函数读取文件（可安全用于二进制文件)。</p>
+<pre><code>file 	必需。规定要读取打开文件。
+length 	必需。规定要读取的最大字节数。
+</code></pre>
+<p>fclose() 函数关闭一个打开文件</p>
+<p>unpack(format,data) 函数从二进制字符串对数据进行解包。</p>
+<pre><code>format 	必需。规定在解包数据时所使用的格式。
+data 	可选。规定被解包的二进制数据。
+
+format 参数的可能值：
+
+a - NUL-padded string
+A - SPACE-padded string
+h - Hex string, low nibble first
+H - Hex string, high nibble first
+c - signed char
+C - unsigned char
+s - signed short (always 16 bit, machine byte order)
+S - unsigned short (always 16 bit, machine byte order)
+n - unsigned short (always 16 bit, big endian byte order)
+v - unsigned short (always 16 bit, little endian byte order)
+i - signed integer (machine dependent size and byte order)
+I - unsigned integer (machine dependent size and byte order)
+l - signed long (always 32 bit, machine byte order)
+L - unsigned long (always 32 bit, machine byte order)
+N - unsigned long (always 32 bit, big endian byte order)
+V - unsigned long (always 32 bit, little endian byte order)
+f - float (machine dependent size and representation)
+d - double (machine dependent size and representation)
+x - NUL byte
+X - Back up one byte
+@ - NUL-fill to absolute position
+</code></pre>
+<p>intval(mixed $var [, int $base = 10 ]) 函数用于获取变量的整数值。</p>
+<pre><code>$var：要转换成 integer 的数量值。
+$base：转化所使用的进制。
+
+如果 base 是 0，通过检测 var 的格式来决定使用的进制：
+如果字符串包括了 "0x" (或 "0X") 的前缀，使用 16 进制 (hex)；否则，
+如果字符串以 "0" 开始，使用 8 进制(octal)；否则，
+将使用 10 进制 (decimal)。
+</code></pre>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>此题源码比较复杂，因为牵扯到进制的问题，我们可以理解为，作者会通过二进制码，来判断上传的文件格式，如果不是jpg、png、gif的话会无法上传。</p>
+<h3 id="通关方法"><a href="#通关方法" class="headerlink" title="通关方法"></a>通关方法</h3><p>综上我们的结题方法就是，制作图片马，直接进行上传即可。</p>
+<p>然后我们上传我们的图片马，然后运用题目要求我们的文件包含漏洞，进行访问php代码即可成功绕过。</p>
+<h2 id="Pass-15-getimagesize-图片马绕过"><a href="#Pass-15-getimagesize-图片马绕过" class="headerlink" title="Pass-15 getimagesize()图片马绕过"></a>Pass-15 getimagesize()图片马绕过</h2><h3 id="关卡简介-1"><a href="#关卡简介-1" class="headerlink" title="关卡简介"></a>关卡简介</h3><p>一样是图片马</p>
+<pre class=" language-php"><code class="language-php"><span class="token keyword">function</span> <span class="token function">isImage</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token variable">$types</span> <span class="token operator">=</span> <span class="token string">'.jpeg|.png|.gif'</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">file_exists</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token variable">$info</span> <span class="token operator">=</span> <span class="token function">getimagesize</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token variable">$ext</span> <span class="token operator">=</span> <span class="token function">image_type_to_extension</span><span class="token punctuation">(</span><span class="token variable">$info</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">stripos</span><span class="token punctuation">(</span><span class="token variable">$types</span><span class="token punctuation">,</span><span class="token variable">$ext</span><span class="token punctuation">)</span><span class="token operator">>=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token variable">$ext</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token variable">$temp_file</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$res</span> <span class="token operator">=</span> <span class="token function">isImage</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token variable">$res</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"文件未知，上传失败！"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">"/"</span><span class="token punctuation">.</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">date</span><span class="token punctuation">(</span><span class="token string">"YmdHis"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token variable">$res</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">,</span><span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"上传出错！"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="函数分析-1"><a href="#函数分析-1" class="headerlink" title="函数分析"></a>函数分析</h3><p>image_type_to_extension(int $imagetype [, bool $include_dot = TRUE) — 根据指定的图像类型返回对应的后缀名。</p>
+<p>getimagesize() 函数用于获取图像大小及相关信息，成功返回一个数组，失败则返回 FALSE 并产生一条 E_WARNING 级的错误信息。</p>
+<pre><code>    索引 0 给出的是图像宽度的像素值
+    索引 1 给出的是图像高度的像素值
+    索引 2 给出的是图像的类型，返回的是数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM
+    索引 3 给出的是一个宽度和高度的字符串，可以直接用于 HTML 的 &lt;image&gt; 标签
+    索引 bits 给出的是图像的每种颜色的位数，二进制格式
+    索引 channels 给出的是图像的通道值，RGB 图像默认是 3
+    索引 mime 给出的是图像的 MIME 信息，此信息可以用来在 HTTP Content-type 头信息中发送正确的信息，如： header("Content-type: image/jpeg");
+</code></pre>
+<h3 id="代码分析-1"><a href="#代码分析-1" class="headerlink" title="代码分析"></a>代码分析</h3><p>作者首先用getimagesize() 函数来获取图片的各种信息然后，运用索引2也就是图片的类型，作为后缀名变量，我们仍然可以上传图片马来进行绕过</p>
+<h3 id="通关方法-1"><a href="#通关方法-1" class="headerlink" title="通关方法"></a>通关方法</h3><p>通过方法和上一关一样，只是这关判断图片类型的方法不同于上一关。</p>
+<h2 id="Pass-16-exif-imagetype-图片马绕过"><a href="#Pass-16-exif-imagetype-图片马绕过" class="headerlink" title="Pass-16 exif_imagetype()图片马绕过"></a>Pass-16 exif_imagetype()图片马绕过</h2><h3 id="关卡简介-2"><a href="#关卡简介-2" class="headerlink" title="关卡简介"></a>关卡简介</h3><p>首先我们要打开php扩展，phpstudy其他选项菜单、PHP拓展及设置里面开启</p>
+<pre class=" language-php"><code class="language-php"><span class="token keyword">function</span> <span class="token function">isImage</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//需要开启php_exif模块</span>
+    <span class="token variable">$image_type</span> <span class="token operator">=</span> <span class="token function">exif_imagetype</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span><span class="token variable">$image_type</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> <span class="token constant">IMAGETYPE_GIF</span><span class="token punctuation">:</span>
+            <span class="token keyword">return</span> <span class="token string">"gif"</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token constant">IMAGETYPE_JPEG</span><span class="token punctuation">:</span>
+            <span class="token keyword">return</span> <span class="token string">"jpg"</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token constant">IMAGETYPE_PNG</span><span class="token punctuation">:</span>
+            <span class="token keyword">return</span> <span class="token string">"png"</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>    
+        <span class="token keyword">default</span><span class="token punctuation">:</span>
+            <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token variable">$temp_file</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$res</span> <span class="token operator">=</span> <span class="token function">isImage</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token variable">$res</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"文件未知，上传失败！"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">"/"</span><span class="token punctuation">.</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">date</span><span class="token punctuation">(</span><span class="token string">"YmdHis"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token string">"."</span><span class="token punctuation">.</span><span class="token variable">$res</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">,</span><span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"上传出错！"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="函数分析-2"><a href="#函数分析-2" class="headerlink" title="函数分析"></a>函数分析</h3><p>exif_imagetype ( string $filename ) 用来读取一个图像的第一个字节并检查其签名。</p>
+<p>如果发现了恰当的签名则返回一个对应的常量，否则返回 FALSE。返回值和 getimagesize() 返回的数组中的索引 2 的值是一样的，但本函数快得多。</p>
+<pre><code>值 	常量
+1 	IMAGETYPE_GIF
+2 	IMAGETYPE_JPEG
+3 	IMAGETYPE_PNG
+4 	IMAGETYPE_SWF
+5 	IMAGETYPE_PSD
+6 	IMAGETYPE_BMP
+7 	IMAGETYPE_TIFF_II（Intel 字节顺序）
+8 	IMAGETYPE_TIFF_MM（Motorola 字节顺序）
+9 	IMAGETYPE_JPC
+10 	IMAGETYPE_JP2
+11 	IMAGETYPE_JPX
+12 	IMAGETYPE_JB2
+13 	IMAGETYPE_SWC
+14 	IMAGETYPE_IFF
+15 	IMAGETYPE_WBMP
+16 	IMAGETYPE_XBM
+</code></pre>
+<h3 id="代码分析-2"><a href="#代码分析-2" class="headerlink" title="代码分析"></a>代码分析</h3><p>此关与上一关不同的是，此关用的是php内置函数来判断图片的类型，从而进行白名单验证</p>
+<h3 id="通关方法-2"><a href="#通关方法-2" class="headerlink" title="通关方法"></a>通关方法</h3><p>这关同上一关一样，只需要上传一个图片马即可进行绕过，这关只是与上关判断文件类型的方式不同</p>
+<h2 id="Pass-17-二次渲染绕过"><a href="#Pass-17-二次渲染绕过" class="headerlink" title="Pass-17 二次渲染绕过"></a>Pass-17 二次渲染绕过</h2><h3 id="关卡简介-3"><a href="#关卡简介-3" class="headerlink" title="关卡简介"></a>关卡简介</h3><p>二次渲染是指服务器把我们上传的图片内容信息提取，然后<br>重新组合</p>
+<p>我们可以获取到重新生成的图片，然后和我们的图片马进行对比</p>
+<p>看他从新生成后的和我们上传的原始文件的差异，进而再次构造图片马</p>
+<pre class=" language-php"><code class="language-php"><span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// 获得上传文件的基本信息，文件名，类型，大小，临时文件路径</span>
+    <span class="token variable">$filename</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$filetype</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'type'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$tmpname</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token variable">$target_path</span><span class="token operator">=</span><span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">'/'</span><span class="token punctuation">.</span><span class="token function">basename</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 获得上传文件的扩展名</span>
+    <span class="token variable">$fileext</span><span class="token operator">=</span> <span class="token function">substr</span><span class="token punctuation">(</span><span class="token function">strrchr</span><span class="token punctuation">(</span><span class="token variable">$filename</span><span class="token punctuation">,</span><span class="token string">"."</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">//判断文件后缀与类型，合法才进行上传操作</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token variable">$fileext</span> <span class="token operator">==</span> <span class="token string">"jpg"</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token variable">$filetype</span><span class="token operator">==</span><span class="token string">"image/jpeg"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$tmpname</span><span class="token punctuation">,</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">//使用上传的图片生成新的图片</span>
+            <span class="token variable">$im</span> <span class="token operator">=</span> <span class="token function">imagecreatefromjpeg</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$im</span> <span class="token operator">==</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+                <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"该文件不是jpg格式的图片！"</span><span class="token punctuation">;</span>
+                @<span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//给新图片指定文件名</span>
+                <span class="token function">srand</span><span class="token punctuation">(</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token variable">$newfilename</span> <span class="token operator">=</span> <span class="token function">strval</span><span class="token punctuation">(</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token string">".jpg"</span><span class="token punctuation">;</span>
+                <span class="token comment" spellcheck="true">//显示二次渲染后的图片（使用用户上传图片生成的新图片）</span>
+                <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">'/'</span><span class="token punctuation">.</span><span class="token variable">$newfilename</span><span class="token punctuation">;</span>
+                <span class="token function">imagejpeg</span><span class="token punctuation">(</span><span class="token variable">$im</span><span class="token punctuation">,</span><span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                @<span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"上传出错！"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token variable">$fileext</span> <span class="token operator">==</span> <span class="token string">"png"</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token variable">$filetype</span><span class="token operator">==</span><span class="token string">"image/png"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$tmpname</span><span class="token punctuation">,</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">//使用上传的图片生成新的图片</span>
+            <span class="token variable">$im</span> <span class="token operator">=</span> <span class="token function">imagecreatefrompng</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$im</span> <span class="token operator">==</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+                <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"该文件不是png格式的图片！"</span><span class="token punctuation">;</span>
+                @<span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                 <span class="token comment" spellcheck="true">//给新图片指定文件名</span>
+                <span class="token function">srand</span><span class="token punctuation">(</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token variable">$newfilename</span> <span class="token operator">=</span> <span class="token function">strval</span><span class="token punctuation">(</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token string">".png"</span><span class="token punctuation">;</span>
+                <span class="token comment" spellcheck="true">//显示二次渲染后的图片（使用用户上传图片生成的新图片）</span>
+                <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">'/'</span><span class="token punctuation">.</span><span class="token variable">$newfilename</span><span class="token punctuation">;</span>
+                <span class="token function">imagepng</span><span class="token punctuation">(</span><span class="token variable">$im</span><span class="token punctuation">,</span><span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+                @<span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>               
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"上传出错！"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token variable">$fileext</span> <span class="token operator">==</span> <span class="token string">"gif"</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token variable">$filetype</span><span class="token operator">==</span><span class="token string">"image/gif"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$tmpname</span><span class="token punctuation">,</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">//使用上传的图片生成新的图片</span>
+            <span class="token variable">$im</span> <span class="token operator">=</span> <span class="token function">imagecreatefromgif</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$im</span> <span class="token operator">==</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+                <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"该文件不是gif格式的图片！"</span><span class="token punctuation">;</span>
+                @<span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//给新图片指定文件名</span>
+                <span class="token function">srand</span><span class="token punctuation">(</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token variable">$newfilename</span> <span class="token operator">=</span> <span class="token function">strval</span><span class="token punctuation">(</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token string">".gif"</span><span class="token punctuation">;</span>
+                <span class="token comment" spellcheck="true">//显示二次渲染后的图片（使用用户上传图片生成的新图片）</span>
+                <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span><span class="token punctuation">.</span><span class="token string">'/'</span><span class="token punctuation">.</span><span class="token variable">$newfilename</span><span class="token punctuation">;</span>
+                <span class="token function">imagegif</span><span class="token punctuation">(</span><span class="token variable">$im</span><span class="token punctuation">,</span><span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+                @<span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$target_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"上传出错！"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"只允许上传后缀为.jpg|.png|.gif的图片文件！"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="函数分析-3"><a href="#函数分析-3" class="headerlink" title="函数分析"></a>函数分析</h3><p>basename(path,suffix) 函数返回路径中的文件名部分。</p>
+<pre><code>path 	必需。规定要检查的路径。
+suffix 	可选。规定文件扩展名。如果文件有 suffix，则不会输出这个扩展名。
+</code></pre>
+<p>imagecreatefromjpeg(string $filename) — 由文件或 URL 创建一个新图象。</p>
+<p>成功后返回图象资源,失败后返回 FALSE 。</p>
+<pre><code>filename    JPEG 图像的路径。
+</code></pre>
+<p>unlink(filename,context) 函数删除文件。</p>
+<p>若成功，则返回 true，失败则返回 false。</p>
+<pre><code>filename 	必需。规定要删除的文件。
+context 	可选。规定文件句柄的环境。Context 是可修改流的行为的一套选项。
+</code></pre>
+<p>srand(seed) 函数播下随机数发生器种子。</p>
+<pre><code>seed 	可选。用 seed 播下随机数发生器种子。
+</code></pre>
+<p>strval() — 获取变量的字符串值。</p>
+<p>imagejpeg(resource $image [, string $filename [, int $quality ]]) — 输出图象到浏览器或文件。</p>
+<pre><code>image
+
+由图象创建函数(例如imagecreatetruecolor())返回的图象资源。
+
+filename
+
+文件保存的路径，如果未设置或为 NULL，将会直接输出原始图象流。
+如果要省略这个参数而提供 quality 参数，使用NULL。
+
+quality
+
+quality 为可选项，范围从 0（最差质量，文件更小）到 100（最佳质量，文件最大）。默认为 IJG 默认的质量值（大约 75）。
+</code></pre>
+<p>imagepng()、imagegif()函数类似与imagejpeg()函数，这里就不做过多赘述了</p>
+<h3 id="代码分析-3"><a href="#代码分析-3" class="headerlink" title="代码分析"></a>代码分析</h3><p>此关作者就是，把我们上传的图片在服务器进行重新渲染，那么我们如果单独上传一个图片马上去，我们的图片经过二次渲染后，里面的一句话木马就会消失，所以我们要对比两张图片的差异，从而再次构造图片马</p>
+<h3 id="通关方法-3"><a href="#通关方法-3" class="headerlink" title="通关方法"></a>通关方法</h3><p>我们首先上传一张gif图片马【我这里推荐的是用windows自带的画图工具，然后保存为gif格式】(因为上传其它图片马二次渲染会稍微麻烦一点具体可参考此文章<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-13)%E5%88%B0%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C%E7%84%B6%E5%90%8E%E4%B8%8B%E8%BD%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BB%99%E6%88%91%E4%BB%AC%E9%87%8D%E6%96%B0%E8%BF%9B%E8%A1%8C%E6%B8%B2%E6%9F%93%E8%BF%87%E7%9A%84%E5%9B%BE%E7%89%87%EF%BC%8C%E5%86%8D%E6%94%BE%E5%88%B0winhex%E6%88%96%E8%80%85Hxd%E5%AF%B9%E6%AF%94%E5%85%B6%E5%B7%AE%E5%BC%82![](https://img-blog.csdnimg.cn/20200726153615232.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzQ5NjIzMzMw,size_16,color_FFFFFF,t_70)">https://xz.aliyun.com/t/2657#toc-13)到到服务器，然后下载服务器给我们重新进行渲染过的图片，再放到winhex或者Hxd对比其差异![](https://img-blog.csdnimg.cn/20200726153615232.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzQ5NjIzMzMw,size_16,color_FFFFFF,t_70)</a></p>
+<p><img src="https://img-blog.csdnimg.cn/20200726153840901.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzQ5NjIzMzMw,size_16,color_FFFFFF,t_70"></p>
+<p>二次渲染的绕过用gif文件比较好绕，因为格式要求不是很严格<br>png和jpg文件要求格式很严格<br>PNG定义了两种类型的数据块，一种是称为关键数据块(critical chunk)，这是标准的数据块，另一种叫做辅助数据块(ancillary chunks)，这是可选的数据块。关键数据块定义了4个标准数据块，每个PNG文件都必须包含它们，PNG读写软件也都必须要支持这些数据块。</p>
+<h2 id="Pass-18-条件竞争绕过"><a href="#Pass-18-条件竞争绕过" class="headerlink" title="Pass-18 条件竞争绕过"></a>Pass-18 条件竞争绕过</h2><h3 id="关卡简介-4"><a href="#关卡简介-4" class="headerlink" title="关卡简介"></a>关卡简介</h3><p>条件竞争漏洞是一种服务器端漏洞，由于服务器端在处理用户请求时，<br>是并发进行的，因此 如果并非处理不当或相关操作逻辑顺序设计的不合理<br>时，将会导致此类问题的发生。</p>
+<pre class=" language-php"><code class="language-php"><span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token variable">$ext_arr</span> <span class="token operator">=</span> <span class="token keyword">array</span><span class="token punctuation">(</span><span class="token string">'jpg'</span><span class="token punctuation">,</span><span class="token string">'png'</span><span class="token punctuation">,</span><span class="token string">'gif'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$file_name</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$temp_file</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$file_ext</span> <span class="token operator">=</span> <span class="token function">substr</span><span class="token punctuation">(</span><span class="token variable">$file_name</span><span class="token punctuation">,</span><span class="token function">strrpos</span><span class="token punctuation">(</span><span class="token variable">$file_name</span><span class="token punctuation">,</span><span class="token string">"."</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$upload_file</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span> <span class="token punctuation">.</span> <span class="token string">'/'</span> <span class="token punctuation">.</span> <span class="token variable">$file_name</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">,</span> <span class="token variable">$upload_file</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">in_array</span><span class="token punctuation">(</span><span class="token variable">$file_ext</span><span class="token punctuation">,</span><span class="token variable">$ext_arr</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+             <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span> <span class="token punctuation">.</span> <span class="token string">'/'</span><span class="token punctuation">.</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">date</span><span class="token punctuation">(</span><span class="token string">"YmdHis"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token string">"."</span><span class="token punctuation">.</span><span class="token variable">$file_ext</span><span class="token punctuation">;</span>
+             <span class="token function">rename</span><span class="token punctuation">(</span><span class="token variable">$upload_file</span><span class="token punctuation">,</span> <span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+             <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"只允许上传.jpg|.png|.gif类型文件！"</span><span class="token punctuation">;</span>
+            <span class="token function">unlink</span><span class="token punctuation">(</span><span class="token variable">$upload_file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'上传出错！'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="函数分析-4"><a href="#函数分析-4" class="headerlink" title="函数分析"></a>函数分析</h3><p>rename(oldname,newname,context) 函数重命名文件或目录。</p>
+<p>若成功，则该函数返回 true。若失败，则返回 false。</p>
+<pre><code>oldname 	必需。规定要重命名的文件或目录。
+newname 	必需。规定文件或目录的新名称。
+context 	可选。规定文件句柄的环境。context 是可修改流的行为的一套选项。
+</code></pre>
+<h3 id="代码分析-4"><a href="#代码分析-4" class="headerlink" title="代码分析"></a>代码分析</h3><p>本关作者的想法就是，如果你上传的文件后缀名不在白名单里面，他会直接删除你上传的文件。<strong>这里有一个先后顺序，通过代码审计发现文件是先被上传到目录然后再进行的过滤删除。</strong></p>
+<h3 id="通关方法-4"><a href="#通关方法-4" class="headerlink" title="通关方法"></a>通关方法</h3><p>这关我们的解题步骤就是，在文件上传后删除前访问文件，就会出现你上传的文件还没来得及删除就已经被访问了。这样也达到了我们的目的<br>这关我们要用到burpsuite的爆破模块</p>
+<h2 id="Pass-19-条件竞争绕过"><a href="#Pass-19-条件竞争绕过" class="headerlink" title="Pass-19 条件竞争绕过"></a>Pass-19 条件竞争绕过</h2><h3 id="关卡简介-5"><a href="#关卡简介-5" class="headerlink" title="关卡简介"></a>关卡简介</h3><pre class=" language-php"><code class="language-php"><span class="token comment" spellcheck="true">//index.php</span>
+<span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    <span class="token keyword">require_once</span><span class="token punctuation">(</span><span class="token string">"./myupload.php"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$imgFileName</span> <span class="token operator">=</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$u</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MyUpload</span><span class="token punctuation">(</span><span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'size'</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token variable">$imgFileName</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$status_code</span> <span class="token operator">=</span> <span class="token variable">$u</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">upload</span><span class="token punctuation">(</span><span class="token constant">UPLOAD_PATH</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span><span class="token variable">$status_code</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> <span class="token number">1</span><span class="token punctuation">:</span>
+            <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+            <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token variable">$u</span><span class="token operator">-</span><span class="token operator">></span><span class="token property">cls_upload_dir</span> <span class="token punctuation">.</span> <span class="token variable">$u</span><span class="token operator">-</span><span class="token operator">></span><span class="token property">cls_file_rename_to</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token number">2</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'文件已经被上传，但没有重命名。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span> 
+        <span class="token keyword">case</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'这个文件不能上传到服务器的临时文件存储目录。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span> 
+        <span class="token keyword">case</span> <span class="token operator">-</span><span class="token number">2</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'上传失败，上传目录不可写。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span> 
+        <span class="token keyword">case</span> <span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'上传失败，无法上传该类型文件。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span> 
+        <span class="token keyword">case</span> <span class="token operator">-</span><span class="token number">4</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'上传失败，上传的文件过大。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span> 
+        <span class="token keyword">case</span> <span class="token operator">-</span><span class="token number">5</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'上传失败，服务器已经存在相同名称文件。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span> 
+        <span class="token keyword">case</span> <span class="token operator">-</span><span class="token number">6</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'文件无法上传，文件不能复制到目标目录。'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>      
+        <span class="token keyword">default</span><span class="token punctuation">:</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'未知错误！'</span><span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment" spellcheck="true">//myupload.php</span>
+<span class="token keyword">class</span> <span class="token class-name">MyUpload</span><span class="token punctuation">{</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> 
+  <span class="token keyword">var</span> <span class="token variable">$cls_arr_ext_accepted</span> <span class="token operator">=</span> <span class="token keyword">array</span><span class="token punctuation">(</span>
+      <span class="token string">".doc"</span><span class="token punctuation">,</span> <span class="token string">".xls"</span><span class="token punctuation">,</span> <span class="token string">".txt"</span><span class="token punctuation">,</span> <span class="token string">".pdf"</span><span class="token punctuation">,</span> <span class="token string">".gif"</span><span class="token punctuation">,</span> <span class="token string">".jpg"</span><span class="token punctuation">,</span> <span class="token string">".zip"</span><span class="token punctuation">,</span> <span class="token string">".rar"</span><span class="token punctuation">,</span> <span class="token string">".7z"</span><span class="token punctuation">,</span><span class="token string">".ppt"</span><span class="token punctuation">,</span>
+      <span class="token string">".html"</span><span class="token punctuation">,</span> <span class="token string">".xml"</span><span class="token punctuation">,</span> <span class="token string">".tiff"</span><span class="token punctuation">,</span> <span class="token string">".jpeg"</span><span class="token punctuation">,</span> <span class="token string">".png"</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>  
+  <span class="token comment" spellcheck="true">/** upload()
+   **
+   ** Method to upload the file.
+   ** This is the only method to call outside the class.
+   ** @para String name of directory we upload to
+   ** @returns void
+  **/</span>
+  <span class="token keyword">function</span> <span class="token function">upload</span><span class="token punctuation">(</span> <span class="token variable">$dir</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    
+    <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">isUploadedFile</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">setDir</span><span class="token punctuation">(</span> <span class="token variable">$dir</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">checkExtension</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">checkSize</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>    
+    <span class="token punctuation">}</span>
+    
+    <span class="token comment" spellcheck="true">// if flag to check if the file exists is set to 1</span>
+    
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token property">cls_file_exists</span> <span class="token operator">==</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      
+      <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">checkFileExists</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>    
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment" spellcheck="true">// if we are here, we are ready to move the file to destination</span>
+
+    <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">move</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>    
+    <span class="token punctuation">}</span>
+
+    <span class="token comment" spellcheck="true">// check if we need to rename the file</span>
+
+    <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token property">cls_rename_file</span> <span class="token operator">==</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token variable">$ret</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">renameFile</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token operator">!=</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token variable">$ret</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>    
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token comment" spellcheck="true">// if we are here, everything worked as planned :)</span>
+
+    <span class="token keyword">return</span> <span class="token variable">$this</span><span class="token operator">-</span><span class="token operator">></span><span class="token function">resultUpload</span><span class="token punctuation">(</span> <span class="token string">"SUCCESS"</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token punctuation">}</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> 
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="函数分析-5"><a href="#函数分析-5" class="headerlink" title="函数分析"></a>函数分析</h3><p>本次函数都在Pass-19下面的mydownload.php中</p>
+<h3 id="代码分析-5"><a href="#代码分析-5" class="headerlink" title="代码分析"></a>代码分析</h3><p>此关作者首先判断了我们的文件后缀名，然后是文件大小、移动文件、最后是重命名<img src="https://img-blog.csdnimg.cn/20200809105624668.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzQ2NDM2NjQw,size_16,color_FFFFFF,t_70"></p>
+<h3 id="通关方法-5"><a href="#通关方法-5" class="headerlink" title="通关方法"></a>通关方法</h3><p>这关作者应该是想让我们，运用条件竞争+Apache解析漏洞来进行上传的，第一种方法我是直接用的上传图片马+文件包含漏洞进行绕过的；具体可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_47598409/article/details/115050869"></a></p>
+<h2 id="Pass-20-00、-x2F-绕过"><a href="#Pass-20-00、-x2F-绕过" class="headerlink" title="Pass-20 %00、/.绕过"></a>Pass-20 %00、/.绕过</h2><h3 id="关卡简介-6"><a href="#关卡简介-6" class="headerlink" title="关卡简介"></a>关卡简介</h3><pre class=" language-php"><code class="language-php"><span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isset</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'submit'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">file_exists</span><span class="token punctuation">(</span><span class="token constant">UPLOAD_PATH</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$deny_ext</span> <span class="token operator">=</span> <span class="token keyword">array</span><span class="token punctuation">(</span><span class="token string">"php"</span><span class="token punctuation">,</span><span class="token string">"php5"</span><span class="token punctuation">,</span><span class="token string">"php4"</span><span class="token punctuation">,</span><span class="token string">"php3"</span><span class="token punctuation">,</span><span class="token string">"php2"</span><span class="token punctuation">,</span><span class="token string">"html"</span><span class="token punctuation">,</span><span class="token string">"htm"</span><span class="token punctuation">,</span><span class="token string">"phtml"</span><span class="token punctuation">,</span><span class="token string">"pht"</span><span class="token punctuation">,</span><span class="token string">"jsp"</span><span class="token punctuation">,</span><span class="token string">"jspa"</span><span class="token punctuation">,</span><span class="token string">"jspx"</span><span class="token punctuation">,</span><span class="token string">"jsw"</span><span class="token punctuation">,</span><span class="token string">"jsv"</span><span class="token punctuation">,</span><span class="token string">"jspf"</span><span class="token punctuation">,</span><span class="token string">"jtml"</span><span class="token punctuation">,</span><span class="token string">"asp"</span><span class="token punctuation">,</span><span class="token string">"aspx"</span><span class="token punctuation">,</span><span class="token string">"asa"</span><span class="token punctuation">,</span><span class="token string">"asax"</span><span class="token punctuation">,</span><span class="token string">"ascx"</span><span class="token punctuation">,</span><span class="token string">"ashx"</span><span class="token punctuation">,</span><span class="token string">"asmx"</span><span class="token punctuation">,</span><span class="token string">"cer"</span><span class="token punctuation">,</span><span class="token string">"swf"</span><span class="token punctuation">,</span><span class="token string">"htaccess"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token variable">$file_name</span> <span class="token operator">=</span> <span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'save_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token variable">$file_ext</span> <span class="token operator">=</span> <span class="token function">pathinfo</span><span class="token punctuation">(</span><span class="token variable">$file_name</span><span class="token punctuation">,</span><span class="token constant">PATHINFO_EXTENSION</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">in_array</span><span class="token punctuation">(</span><span class="token variable">$file_ext</span><span class="token punctuation">,</span><span class="token variable">$deny_ext</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token variable">$temp_file</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span> <span class="token punctuation">.</span> <span class="token string">'/'</span> <span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">,</span> <span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+                <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+                <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'上传出错！'</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">'禁止保存为该类型文件！'</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span> <span class="token punctuation">.</span> <span class="token string">'文件夹不存在,请手工创建！'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+</code></pre>
+<h3 id="函数分析-6"><a href="#函数分析-6" class="headerlink" title="函数分析"></a>函数分析</h3><p>pathinfo(path,options) 函数以数组的形式返回文件路径的信息。</p>
+<pre><code>path 	必需。规定要检查的路径。
+
+process_sections 	可选。规定要返回的数组元素。默认是 all。
+
+可能的值：
+
+PATHINFO_DIRNAME - 只返回 dirname（所在路径）
+PATHINFO_BASENAME - 只返回 basename（文件名）
+PATHINFO_EXTENSION - 只返回 extension（后缀名）
+</code></pre>
+<h3 id="代码分析-6"><a href="#代码分析-6" class="headerlink" title="代码分析"></a>代码分析</h3><p>没有对上传的文件做判断，只对用户输入的文件名做判断<br>        后缀名黑名单<br>        上传的文件名用户可控<br>        黑名单用于用户输入的文件后缀名进行判断<br>        <strong>move_uploaded_file()还有这么一个特性，会忽略掉文件末尾的 <code>/.</code></strong></p>
+<p>利用%00也可以绕过黑名单</p>
+<h3 id="通关方法-6"><a href="#通关方法-6" class="headerlink" title="通关方法"></a>通关方法</h3><p>我们首先上传一个php脚本，然后在save_name文件名的后面添加%00（<code>注意要URL解码，或者更改16进制码</code>）</p>
+<h2 id="Pass-21-MIME、数组、-00绕过"><a href="#Pass-21-MIME、数组、-00绕过" class="headerlink" title="Pass-21 MIME、数组、%00绕过"></a>Pass-21 MIME、数组、%00绕过</h2><h3 id="关卡简介-7"><a href="#关卡简介-7" class="headerlink" title="关卡简介"></a>关卡简介</h3><pre class=" language-php"><code class="language-php"><span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">empty</span><span class="token punctuation">(</span><span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">//检查MIME</span>
+    <span class="token variable">$allow_type</span> <span class="token operator">=</span> <span class="token keyword">array</span><span class="token punctuation">(</span><span class="token string">'image/jpeg'</span><span class="token punctuation">,</span><span class="token string">'image/png'</span><span class="token punctuation">,</span><span class="token string">'image/gif'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">in_array</span><span class="token punctuation">(</span><span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'type'</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token variable">$allow_type</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"禁止上传该类型文件!"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//检查文件名 在三元运算符中的问号，是有着特定的程序意义的，它的表示方法大概是：条件一?条件二：条件三，当条件一成立时，问号的作用是选择条件二作为程序继续执行的分支。也就是说，条件一成立，就执行条件二，否则执行条件三。</span>
+        <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">empty</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'save_name'</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">]</span> <span class="token punctuation">:</span> <span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string">'save_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">is_array</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">explode</span><span class="token punctuation">(</span><span class="token string">'.'</span><span class="token punctuation">,</span> <span class="token function">strtolower</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token variable">$ext</span> <span class="token operator">=</span> <span class="token function">end</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token variable">$allow_suffix</span> <span class="token operator">=</span> <span class="token keyword">array</span><span class="token punctuation">(</span><span class="token string">'jpg'</span><span class="token punctuation">,</span><span class="token string">'png'</span><span class="token punctuation">,</span><span class="token string">'gif'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">in_array</span><span class="token punctuation">(</span><span class="token variable">$ext</span><span class="token punctuation">,</span> <span class="token variable">$allow_suffix</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"禁止上传该后缀文件!"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+            <span class="token variable">$file_name</span> <span class="token operator">=</span> <span class="token function">reset</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span> <span class="token punctuation">.</span> <span class="token string">'.'</span> <span class="token punctuation">.</span> <span class="token variable">$file</span><span class="token punctuation">[</span><span class="token function">count</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token variable">$temp_file</span> <span class="token operator">=</span> <span class="token variable">$_FILES</span><span class="token punctuation">[</span><span class="token string">'upload_file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">'tmp_name'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token variable">$img_path</span> <span class="token operator">=</span> <span class="token constant">UPLOAD_PATH</span> <span class="token punctuation">.</span> <span class="token string">'/'</span> <span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">move_uploaded_file</span><span class="token punctuation">(</span><span class="token variable">$temp_file</span><span class="token punctuation">,</span> <span class="token variable">$img_path</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"文件上传成功！"</span><span class="token punctuation">;</span>
+                <span class="token variable">$is_upload</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"文件上传失败！"</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+    <span class="token variable">$msg</span> <span class="token operator">=</span> <span class="token string">"请选择要上传的文件！"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="函数分析-7"><a href="#函数分析-7" class="headerlink" title="函数分析"></a>函数分析</h3><p>explode(separator,string,limit) 函数把字符串打散为数组。</p>
+<pre><code>separator 	必需。规定在哪里分割字符串。
+
+string 	必需。要分割的字符串。
+
+limit 	可选。规定所返回的数组元素的数目。
+
+可能的值：
+
+大于 0 - 返回包含最多 limit 个元素的数组
+小于 0 - 返回包含除了最后的 -limit 个元素以外的所有元素的数组
+0 - 返回包含一个元素的数组
+</code></pre>
+<p>strtolower(string) 函数把字符串转换为小写。</p>
+<p>empty() 函数用于检查一个变量是否为空。</p>
+<p>empty() 判断一个变量是否被认为是空的。当一个变量并不存在，或者它的值等同于 FALSE，那么它会被认为不存在。如果变量不存在的话，empty()并不会产生警告。</p>
+<p>end() 函数将数组内部指针指向最后一个元素，并返回该元素的值（如果成功）。</p>
+<p>reset() 函数将内部指针指向数组中的第一个元素，并输出。</p>
+<p>count(array,mode) 函数返回数组中元素的数目。</p>
+<pre><code>array 	必需。规定数组。
+
+mode 	可选。规定模式。可能的值：
+
+0 - 默认。不对多维数组中的所有元素进行计数
+1 - 递归地计数数组中元素的数目（计算多维数组中的所有元素）
+</code></pre>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><blockquote>
+<p>这一关白名单<br>验证过程：<br>–&gt; 验证上传路径是否存在<br>–&gt; 验证[‘upload_file’]的content-type是否合法（可以抓包修改）<br>–&gt; 判断POST参数是否为空定义$file变量（关键：构造数组绕过下一步的判断）<br>–&gt;判断file不是数组则使用explode(‘.’, strtolower($file))对file进行切割，将file变为一个数组<br>–&gt; 判断数组最后一个元素是否合法<br>–&gt; 数组第一位和$file[count($file) - 1]进行拼接，产生保存文件名file_name<br>–&gt; 上传文件</p>
+</blockquote>
+<p>作者首先检查了我们上传文件的MIME类型，然后定义了允许的上传类型，然后判断我们上传文件的类型，如果我们上传的文件类型在白名单里面，然后判断我们由POST接收的文件名是否为空，如果为空，那么我们上传文件就会保存为原来的文件名，如果不为空，那么我们上传的文件名会保存为，我们POST接收的文件名。然后作者判断了我们的file变量如果不是数组，那么我们将file变量先转换为小写然后再用explode打成数组（以点为分隔符），然后取它的后缀名，并且定义了一个允许上传的后缀名数组，然后判断如果我们取的后缀名在白名单里面，然后取到了我们的文件名，然后进行移动</p>
+<h3 id="通关方法-7"><a href="#通关方法-7" class="headerlink" title="通关方法"></a>通关方法</h3><p>对照源码进行分析，首先判断了利用白名单判断文件类型（MIME验证），然后获取savename的值赋值给$file，判断是否为数组，是的话进行拆分，提取数组最后的一个进行文件后缀验证，这个也通过的话，提取数组的首个+.+后缀（$file[count($file)-1]);这个函数的意思是，看数组file有几个元素，减1就是取最后的哪一位，因为数组都是从0开始表示的；下面就是获取一个临时文件名，移动临时文件名，上传成功，这里也利用到再移动文件的时候shell.php/.jpg等，shell.php不会被认为是一个文件夹而会被表示为shell.php这一题也就是利用这几个特性进行绕过。</p>
+<pre><code>我们要改的就是下面的要求
+
+修改content-type
+修改POST参数为数组类型，索引[0]为`upload-20.php`，索引[2]为`jpg|png|gif`。
+只要第二个索引`不为1`，$file[count($file) - 1]就等价于$file[2-1]，值为空
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210321172610126.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NzU5ODQwOQ==,size_16,color_FFFFFF,t_70"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>文件上传<br>                漏洞成因： 具备上传文件功能的Web等应用，未对用户选择上传的文件进行校验，使得非法用户可通过上传可执行脚本而获取应用的控制权限。<br>                防护与绕过： 通过upload-labs靶场实战，了解更多的防护与绕过手段。</p>
+<p>防御<br>            不要暴露上传文件的位置<br>            禁用上传文件的执行权限<br>            黑白名单<br>            对上传的文件重命名，不易被猜测<br>            对文件内容进行二次渲染<br>            对上传的内容进行读取检查<br>            不同系统有不同的需求，根据系统需求制定特定的防御手段。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="shj1395.top">四号街1395</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://shj1395.top/2022/05/05/day22web-lou-dong-wen-jian-shang-chuan-zhi-nei-rong-luo-ji-shu-zu-rao-guo/">http://shj1395.top/2022/05/05/day22web-lou-dong-wen-jian-shang-chuan-zhi-nei-rong-luo-ji-shu-zu-rao-guo/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">转载请注明来处！！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B0%8F%E8%BF%AA%E5%AE%89%E5%85%A8/">小迪安全</a></div><div class="post_share"><div class="social-share" data-image="https://w.wallhaven.cc/full/72/wallhaven-72kdvo.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/05/19/day23web-lou-dong-wen-jian-shang-chuan-zhi-jie-xi-lou-dong-bian-ji-qi/"><img class="prev-cover" src="https://w.wallhaven.cc/full/y8/wallhaven-y8o8kd.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Day23web漏洞-文件上传之解析漏洞编辑器</div></div></a></div><div class="next-post pull-right"><a href="/2022/04/28/metasploit-gong-ju-de-shi-yong/"><img class="next-cover" src="https://p.ananas.chaoxing.com/star3/origin/12ed14d7fff38930d22bdd82a4441638.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Metasploit工具的使用</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/16/day12web-lou-dong-sql-zhu-ru-jian-yao/" title="Day12web漏洞-SQL注入简要"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/2d9ffa847935e0bc1eb746e85300b8fb.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">Day12web漏洞-SQL注入简要</div></div></a></div><div><a href="/2022/03/16/day11web-lou-dong-bi-dong-zhi-shi-dian/" title="Day11web漏洞-必懂知识点"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">Day11web漏洞-必懂知识点</div></div></a></div><div><a href="/2022/04/16/day13web-lou-dong-sql-zhu-ru-zhi-mysql-zhu-ru/" title="Day13web漏洞-SQL注入之MySQL注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/a7421262a6046a1acf0e94cc20030e1a.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">Day13web漏洞-SQL注入之MySQL注入</div></div></a></div><div><a href="/2022/04/17/day14web-lou-dong-sql-zhu-ru-lei-xing-ji-ti-jiao-zhu-ru/" title="Day14web漏洞-SQL注入类型及提交注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/53ebda2a33aee1877e0e84622abda09c.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="title">Day14web漏洞-SQL注入类型及提交注入</div></div></a></div><div><a href="/2022/04/20/day15web-lou-dong-sql-zhu-ru-zhi-oracle-mongodb-deng-zhu-ru/" title="Day15web漏洞-SQL注入之Oracle、mongodb等注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/f8f3ad61348547f33ae6478fb14b2550.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-20</div><div class="title">Day15web漏洞-SQL注入之Oracle、mongodb等注入</div></div></a></div><div><a href="/2022/04/22/day16web-lou-dong-sql-zhu-ru-zhi-cha-xun-fang-shi-ji-bao-cuo-mang-zhu/" title="Day16web漏洞-SQL注入之查询方式及报错盲注"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/4623dee4d25a43ee2e64c3a190e0ef9a.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-22</div><div class="title">Day16web漏洞-SQL注入之查询方式及报错盲注</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/111.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">四号街1395</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-14-%E5%9B%BE%E7%89%87%E9%A9%AC%E7%BB%95%E8%BF%87"><span class="toc-number">1.</span> <span class="toc-text">Pass-14 图片马绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-15-getimagesize-%E5%9B%BE%E7%89%87%E9%A9%AC%E7%BB%95%E8%BF%87"><span class="toc-number">2.</span> <span class="toc-text">Pass-15 getimagesize()图片马绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-1"><span class="toc-number">2.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-1"><span class="toc-number">2.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-1"><span class="toc-number">2.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-1"><span class="toc-number">2.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-16-exif-imagetype-%E5%9B%BE%E7%89%87%E9%A9%AC%E7%BB%95%E8%BF%87"><span class="toc-number">3.</span> <span class="toc-text">Pass-16 exif_imagetype()图片马绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-2"><span class="toc-number">3.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-2"><span class="toc-number">3.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-2"><span class="toc-number">3.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-2"><span class="toc-number">3.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-17-%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E7%BB%95%E8%BF%87"><span class="toc-number">4.</span> <span class="toc-text">Pass-17 二次渲染绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-3"><span class="toc-number">4.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-3"><span class="toc-number">4.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-3"><span class="toc-number">4.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-3"><span class="toc-number">4.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-18-%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E7%BB%95%E8%BF%87"><span class="toc-number">5.</span> <span class="toc-text">Pass-18 条件竞争绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-4"><span class="toc-number">5.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-4"><span class="toc-number">5.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-4"><span class="toc-number">5.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-4"><span class="toc-number">5.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-19-%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E7%BB%95%E8%BF%87"><span class="toc-number">6.</span> <span class="toc-text">Pass-19 条件竞争绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-5"><span class="toc-number">6.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-5"><span class="toc-number">6.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-5"><span class="toc-number">6.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-5"><span class="toc-number">6.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-20-00%E3%80%81-x2F-%E7%BB%95%E8%BF%87"><span class="toc-number">7.</span> <span class="toc-text">Pass-20 %00、&#x2F;.绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-6"><span class="toc-number">7.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-6"><span class="toc-number">7.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-6"><span class="toc-number">7.3.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-6"><span class="toc-number">7.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-21-MIME%E3%80%81%E6%95%B0%E7%BB%84%E3%80%81-00%E7%BB%95%E8%BF%87"><span class="toc-number">8.</span> <span class="toc-text">Pass-21 MIME、数组、%00绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E5%8D%A1%E7%AE%80%E4%BB%8B-7"><span class="toc-number">8.1.</span> <span class="toc-text">关卡简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90-7"><span class="toc-number">8.2.</span> <span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">8.3.</span> <span class="toc-text">源码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E5%85%B3%E6%96%B9%E6%B3%95-7"><span class="toc-number">8.4.</span> <span class="toc-text">通关方法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">总结</span></a></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记"><img src="https://w.wallhaven.cc/full/96/wallhaven-96w8e8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络安全运营笔记"/></a><div class="content"><a class="title" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记">网络安全运营笔记</a><time datetime="2022-06-09T03:05:16.000Z" title="发表于 2022-06-09 11:05:16">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳"><img src="https://w.wallhaven.cc/full/6o/wallhaven-6orjr7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="云计算归纳"/></a><div class="content"><a class="title" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳">云计算归纳</a><time datetime="2022-06-09T02:13:19.000Z" title="发表于 2022-06-09 10:13:19">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储"><img src="https://w.wallhaven.cc/full/e7/wallhaven-e7g71w.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络存储"/></a><div class="content"><a class="title" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储">网络存储</a><time datetime="2022-06-07T15:26:22.000Z" title="发表于 2022-06-07 23:26:22">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/02/hello-world/" title="Hello World"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/06/02/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-02T07:10:47.387Z" title="发表于 2022-06-02 15:10:47">2022-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电脑亮度无法调节方法"/></a><div class="content"><a class="title" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法">电脑亮度无法调节方法</a><time datetime="2022-05-22T20:46:59.000Z" title="发表于 2022-05-23 04:46:59">2022-05-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 四号街1395</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,雯雯" data-fontsize="20px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

